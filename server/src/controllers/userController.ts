@@ -1,11 +1,8 @@
 import { Request, Response } from "express";
 import User from "../models/User";
 
-// @desc    Get current user profile
-// @route   GET /api/users/me
-// @access  Private
+// Gets user profile (protected route) -> GET /api/users/me
 export const getMe = async (req: Request, res: Response): Promise<void> => {
-  // Changed return type to Promise<void>
   try {
     const user = await User.findById(req.userId);
 

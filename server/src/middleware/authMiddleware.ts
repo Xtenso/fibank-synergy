@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { verifyToken } from "../utils/jwtUtils";
 import User from "../models/User";
 
-// Extend Express Request type to include userId
+// include userId in express request for TS so that we can use: req.userId
 declare global {
   namespace Express {
     interface Request {
@@ -16,28 +16,21 @@ export const protect = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  // Change return type to Promise<void>
   try {
-    // Get token from header
     let token: string | undefined;
 
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.startsWith("Bearer")
-    ) {
+    if (req.headers.authorization?.startsWith("Bearer")) {
       token = req.headers.authorization.split(" ")[1];
     }
 
-    // Check if token exists
     if (!token) {
       res.status(401).json({
         success: false,
         message: "Not authorized to access this route",
       });
-      return; // Don't return the response object
+      return;
     }
 
-    // Verify token
     const decoded = verifyToken(token);
 
     if (!decoded) {
@@ -45,10 +38,9 @@ export const protect = async (
         success: false,
         message: "Token is not valid or has expired",
       });
-      return; // Don't return the response object
+      return;
     }
 
-    // Add user ID to request object
     req.userId = decoded.id;
     next();
   } catch (error) {
@@ -56,7 +48,7 @@ export const protect = async (
       success: false,
       message: "Not authorized to access this route",
     });
-    return; // Don't return the response object
+    return;
   }
 };
 
@@ -65,7 +57,6 @@ export const admin = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  // Change return type to Promise<void>
   try {
     const user = await User.findById(req.userId);
 
@@ -76,13 +67,12 @@ export const admin = async (
         success: false,
         message: "Not authorized as an admin",
       });
-      return; // Don't return the response object
+      return;
     }
   } catch (error) {
     res.status(500).json({
       success: false,
       message: "Server error checking permissions",
     });
-    // Don't return the response object
   }
 };

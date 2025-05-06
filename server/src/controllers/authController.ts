@@ -3,16 +3,12 @@ import User from "../models/User";
 import { generateToken } from "../utils/jwtUtils";
 import { UserRegistrationData, UserLoginData } from "../types/user";
 
-// @desc    Register new user
-// @route   POST /api/auth/register
-// @access  Public
+// Register new user -> POST /api/auth/register
 export const register = async (req: Request, res: Response): Promise<void> => {
-  // Changed return type to Promise<void>
   try {
     const { firstName, lastName, email, password }: UserRegistrationData =
       req.body;
 
-    // Check if user already exists
     const userExists = await User.findOne({ email });
 
     if (userExists) {
@@ -23,7 +19,6 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Create new user
     const user = await User.create({
       firstName,
       lastName,
@@ -31,10 +26,8 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       password,
     });
 
-    // Generate token
     const token = generateToken(user._id as string);
 
-    // Send successful response
     res.status(201).json({
       success: true,
       user: {
@@ -56,15 +49,11 @@ export const register = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-// @desc    Login user
-// @route   POST /api/auth/login
-// @access  Public
+// Login user -> POST /api/auth/login
 export const login = async (req: Request, res: Response): Promise<void> => {
-  // Changed return type to Promise<void>
   try {
     const { email, password }: UserLoginData = req.body;
 
-    // Find user by email
     const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
@@ -75,7 +64,6 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Check password
     const isPasswordMatch = await user.comparePassword(password);
 
     if (!isPasswordMatch) {
@@ -86,10 +74,8 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Generate token
     const token = generateToken(user._id as string);
 
-    // Send successful response
     res.status(200).json({
       success: true,
       user: {

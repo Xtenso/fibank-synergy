@@ -1,7 +1,6 @@
 import jwt from "jsonwebtoken";
 import { JwtPayload } from "../types/user";
 
-// Generate access token
 export const generateToken = (userId: string): string => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET as string, {
     expiresIn: "1d",
@@ -9,7 +8,6 @@ export const generateToken = (userId: string): string => {
   });
 };
 
-// Verify token
 export const verifyToken = (token: string): JwtPayload | null => {
   try {
     return jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;

@@ -2,8 +2,7 @@ import express, { Application } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./config/db";
-import authRoutes from "./routes/authRoutes";
-import userRoutes from "./routes/userRoutes";
+import initializeRoutes from "./routes";
 
 // Load environment variables
 dotenv.config();
@@ -11,7 +10,7 @@ dotenv.config();
 // Connect to MongoDB
 connectDB();
 
-// Initialize Express app
+// Express app
 const app: Application = express();
 
 // Middleware
@@ -24,13 +23,7 @@ app.use(
 );
 
 // Routes
-app.use("/api/auth", authRoutes);
-app.use("/api/users", userRoutes);
-
-// Base route
-app.get("/", (req, res) => {
-  res.send("FiBank Synergy API is running...");
-});
+initializeRoutes(app);
 
 // Start server
 const PORT = process.env.PORT || 5000;
