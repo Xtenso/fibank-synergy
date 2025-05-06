@@ -1,8 +1,11 @@
 import jwt from "jsonwebtoken";
 import { JwtPayload } from "../types/user";
 
-export const generateToken = (userId: string): string => {
-  return jwt.sign({ id: userId }, process.env.JWT_SECRET as string, {
+export const generateToken = (
+  userId: string,
+  role: "user" | "admin"
+): string => {
+  return jwt.sign({ id: userId, role }, process.env.JWT_SECRET as string, {
     expiresIn: "1d",
     /*expiresIn: process.env.JWT_EXPIRES_IN as string|| "1d",*/
   });

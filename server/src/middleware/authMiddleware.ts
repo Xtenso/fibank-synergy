@@ -1,32 +1,30 @@
 import { Request, Response, NextFunction } from "express";
 import { verifyToken } from "../utils/jwtUtils";
-import User from "../models/User";
 
-// include userId in express request for TS so that we can use: req.userId
+// include user id and role in express request for TS so that we can use: req.user.id/role
 declare global {
   namespace Express {
     interface Request {
-      userId?: string;
+      user?: {
+        id: string;
+        role: "user" | "admin";
+      };
     }
   }
 }
 
-export const protect = async (
+export const authenticate = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
-    let token: string | undefined;
-
-    if (req.headers.authorization?.startsWith("Bearer")) {
-      token = req.headers.authorization.split(" ")[1];
-    }
+    const token = req.headers.authorization?.split(" ")[1];
 
     if (!token) {
       res.status(401).json({
         success: false,
-        message: "Not authorized to access this route",
+        message: "Authentication required",
       });
       return;
     }
@@ -36,43 +34,43 @@ export const protect = async (
     if (!decoded) {
       res.status(401).json({
         success: false,
-        message: "Token is not valid or has expired",
+        message: "Invalid or expired token",
       });
       return;
     }
 
-    req.userId = decoded.id;
+    req.user = {
+      id: decoded.id,
+      role: decoded.role,
+    };
+
     next();
   } catch (error) {
     res.status(401).json({
       success: false,
-      message: "Not authorized to access this route",
+      message: "Authentication failed",
     });
-    return;
   }
 };
 
-export const admin = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const user = await User.findById(req.userId);
-
-    if (user && user.role === "admin") {
-      next();
-    } else {
-      res.status(403).json({
+export const authorize = (roles: ("user" | "admin")[]) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
+    if (!req.user) {
+      res.status(401).json({
         success: false,
-        message: "Not authorized as an admin",
+        message: "Authentication required",
       });
       return;
     }
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Server error checking permissions",
-    });
-  }
+
+    if (!roles.includes(req.user.role)) {
+      res.status(403).json({
+        success: false,
+        message: "Insufficient permissions",
+      });
+      return;
+    }
+
+    next();
+  };
 };

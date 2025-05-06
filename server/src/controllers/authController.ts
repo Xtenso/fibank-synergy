@@ -26,7 +26,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       password,
     });
 
-    const token = generateToken(user._id as string);
+    const token = generateToken(user._id as string, user.role);
 
     res.status(201).json({
       success: true,
@@ -74,7 +74,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const token = generateToken(user._id as string);
+    const token = generateToken(user._id as string, user.role);
 
     res.status(200).json({
       success: true,

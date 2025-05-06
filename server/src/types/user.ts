@@ -24,4 +24,5 @@ export interface UserLoginData {
 
 export interface JwtPayload {
   id: string;
+  role: "user" | "admin";
 }
