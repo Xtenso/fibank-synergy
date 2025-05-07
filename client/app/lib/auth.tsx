@@ -4,6 +4,10 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { redirect, useRouter } from "next/navigation";
 import api from "./api";
 
+// Constants for localStorage keys
+const TOKEN_KEY = "fibank_token";
+const USER_KEY = "fibank_user";
+
 // Types
 export interface User {
   id: string;
@@ -11,6 +15,16 @@ export interface User {
   nameCyrillic: string;
   nameLatin: string;
   email: string;
+  username: string;
+  role: "user" | "admin";
+}
+
+// Simplified user type for localStorage
+interface StoredUser {
+  id: string;
+  email: string;
+  nameCyrillic: string;
+  nameLatin: string;
   username: string;
   role: "user" | "admin";
 }
@@ -40,6 +54,18 @@ export interface RegisterData {
 // Create context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Helper to extract only needed user fields for localStorage
+const extractStoredUserData = (userData: any): StoredUser => {
+  return {
+    id: userData.id,
+    email: userData.email,
+    nameCyrillic: userData.nameCyrillic,
+    nameLatin: userData.nameLatin,
+    username: userData.username,
+    role: userData.role,
+  };
+};
+
 // Auth Provider component
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -51,16 +77,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          setIsLoading(false);
-          return;
-        }
+        // Try to get user data from localStorage first
+        const storedUser = localStorage.getItem(USER_KEY);
+        const token = localStorage.getItem(TOKEN_KEY);
 
-        const response = await api.get("/users/me");
-        setUser(response.data.user);
+        if (storedUser && token) {
+          // If we have stored user data, use it immediately
+          setUser(JSON.parse(storedUser));
+
+          try {
+            // Validate the token by making a request to /me endpoint
+            const response = await api.get("/users/me");
+            const userData = response.data.user;
+
+            // Store only essential fields
+            const storedUserData = extractStoredUserData(userData);
+
+            // Update state and localStorage
+            setUser(userData);
+            localStorage.setItem(USER_KEY, JSON.stringify(storedUserData));
+          } catch (err) {
+            // If token validation fails, clear auth data
+            localStorage.removeItem(TOKEN_KEY);
+            localStorage.removeItem(USER_KEY);
+            setUser(null);
+          }
+        } else {
+          // No stored user/token found
+          setUser(null);
+        }
       } catch (error) {
-        localStorage.removeItem("token");
+        // If any error occurs, clear auth data
+        localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(USER_KEY);
+        setUser(null);
       } finally {
         setIsLoading(false);
       }
@@ -76,9 +126,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setError(null);
 
       const response = await api.post("/auth/login", { username, password });
+      const userData = response.data.user;
 
-      localStorage.setItem("token", response.data.token);
-      setUser(response.data.user);
+      // Store only essential fields
+      const storedUserData = extractStoredUserData(userData);
+
+      // Store token and essential user data in localStorage
+      localStorage.setItem(TOKEN_KEY, response.data.token);
+      localStorage.setItem(USER_KEY, JSON.stringify(storedUserData));
+
+      // Update state with full user data
+      setUser(userData);
 
       router.push("/dashboard");
     } catch (error: any) {
@@ -96,9 +154,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setError(null);
 
       const response = await api.post("/auth/register", userData);
+      const responseUserData = response.data.user;
 
-      localStorage.setItem("token", response.data.token);
-      setUser(response.data.user);
+      // Store only essential fields
+      const storedUserData = extractStoredUserData(responseUserData);
+
+      // Store token and essential user data in localStorage
+      localStorage.setItem(TOKEN_KEY, response.data.token);
+      localStorage.setItem(USER_KEY, JSON.stringify(storedUserData));
+
+      // Update state with full user data
+      setUser(responseUserData);
 
       router.push("/dashboard");
     } catch (error: any) {
@@ -111,8 +177,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Logout user
   const logout = (): void => {
-    localStorage.removeItem("token");
+    // Clear all auth data from localStorage
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
+
+    // Update state
     setUser(null);
+
     router.push("/");
   };
 
