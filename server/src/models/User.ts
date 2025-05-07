@@ -3,14 +3,24 @@ import bcrypt from "bcryptjs";
 import { IUser } from "../types/user";
 
 const UserSchema: Schema = new Schema({
-  firstName: {
+  uin: {
     type: String,
-    required: [true, "First name is required"],
+    required: [true, "UIN is required"],
     trim: true,
   },
-  lastName: {
+  uinForeigner: {
     type: String,
-    required: [true, "Last name is required"],
+    required: false,
+    trim: true,
+  },
+  nameCyrillic: {
+    type: String,
+    required: [true, "Name in Cyrillic is required"],
+    trim: true,
+  },
+  nameLatin: {
+    type: String,
+    required: [true, "Name in Latin is required"],
     trim: true,
   },
   email: {
@@ -23,6 +33,22 @@ const UserSchema: Schema = new Schema({
       /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
       "Please provide a valid email",
     ],
+  },
+  phoneNumber: {
+    type: String,
+    required: [true, "Phone number is required"],
+    trim: true,
+  },
+  address: {
+    type: String,
+    required: [true, "Address is required"],
+    trim: true,
+  },
+  username: {
+    type: String,
+    required: [true, "Username is required"],
+    unique: true,
+    trim: true,
   },
   password: {
     type: String,

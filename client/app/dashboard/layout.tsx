@@ -41,9 +41,7 @@ export default function DashboardLayout({
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:items-center">
               <div className="ml-3 relative flex items-center space-x-4">
-                <p className="text-sm text-gray-700">
-                  {user?.firstName} {user?.lastName}
-                </p>
+                <p className="text-sm text-gray-700">{user?.nameCyrillic}</p>
                 <button
                   onClick={logout}
                   className="px-3 py-1 text-sm rounded-md bg-red-50 text-red-700 hover:bg-red-100"

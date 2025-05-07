@@ -6,12 +6,21 @@ import { UserRegistrationData, UserLoginData } from "../types/user";
 // Register new user -> POST /api/auth/register
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { firstName, lastName, email, password }: UserRegistrationData =
-      req.body;
+    const {
+      uin,
+      uinForeigner,
+      nameCyrillic,
+      nameLatin,
+      email,
+      phoneNumber,
+      address,
+      username,
+      password,
+    }: UserRegistrationData = req.body;
 
-    const userExists = await User.findOne({ email });
-
-    if (userExists) {
+    // Check if email already exists
+    const emailExists = await User.findOne({ email });
+    if (emailExists) {
       res.status(400).json({
         success: false,
         message: "User with this email already exists",
@@ -19,10 +28,25 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
+    // Check if username already exists
+    const usernameExists = await User.findOne({ username });
+    if (usernameExists) {
+      res.status(400).json({
+        success: false,
+        message: "Username already taken",
+      });
+      return;
+    }
+
     const user = await User.create({
-      firstName,
-      lastName,
+      uin,
+      uinForeigner,
+      nameCyrillic,
+      nameLatin,
       email,
+      phoneNumber,
+      address,
+      username,
       password,
     });
 
@@ -32,9 +56,10 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       success: true,
       user: {
         id: user._id,
-        firstName: user.firstName,
-        lastName: user.lastName,
+        uin: user.uin,
+        nameLatin: user.nameLatin,
         email: user.email,
+        username: user.username,
         role: user.role,
       },
       token,
@@ -52,9 +77,9 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 // Login user -> POST /api/auth/login
 export const login = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { email, password }: UserLoginData = req.body;
+    const { username, password }: UserLoginData = req.body;
 
-    const user = await User.findOne({ email }).select("+password");
+    const user = await User.findOne({ username }).select("+password");
 
     if (!user) {
       res.status(401).json({
@@ -80,9 +105,10 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       success: true,
       user: {
         id: user._id,
-        firstName: user.firstName,
-        lastName: user.lastName,
+        uin: user.uin,
+        nameLatin: user.nameLatin,
         email: user.email,
+        username: user.username,
         role: user.role,
       },
       token,

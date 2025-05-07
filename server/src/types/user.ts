@@ -1,9 +1,14 @@
 import { Document } from "mongoose";
 
 export interface IUser extends Document {
-  firstName: string;
-  lastName: string;
+  uin: string;
+  uinForeigner?: string;
+  nameCyrillic: string;
+  nameLatin: string;
   email: string;
+  phoneNumber: string;
+  address: string;
+  username: string;
   password: string;
   role: "user" | "admin";
   createdAt: Date;
@@ -11,14 +16,19 @@ export interface IUser extends Document {
 }
 
 export interface UserRegistrationData {
-  firstName: string;
-  lastName: string;
+  uin: string;
+  uinForeigner?: string;
+  nameCyrillic: string;
+  nameLatin: string;
   email: string;
+  phoneNumber: string;
+  address: string;
+  username: string;
   password: string;
 }
 
 export interface UserLoginData {
-  email: string;
+  username: string;
   password: string;
 }
 

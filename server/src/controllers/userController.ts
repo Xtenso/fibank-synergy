@@ -26,10 +26,16 @@ export const getMe = async (req: Request, res: Response): Promise<void> => {
       success: true,
       user: {
         id: user._id,
-        firstName: user.firstName,
-        lastName: user.lastName,
+        uin: user.uin,
+        uinForeigner: user.uinForeigner,
+        nameCyrillic: user.nameCyrillic,
+        nameLatin: user.nameLatin,
         email: user.email,
+        phoneNumber: user.phoneNumber,
+        address: user.address,
+        username: user.username,
         role: user.role,
+        createdAt: user.createdAt,
       },
     });
   } catch (error) {

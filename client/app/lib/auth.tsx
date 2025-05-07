@@ -7,9 +7,11 @@ import api from "./api";
 // Types
 export interface User {
   id: string;
-  firstName: string;
-  lastName: string;
+  uin: string;
+  nameCyrillic: string;
+  nameLatin: string;
   email: string;
+  username: string;
   role: "user" | "admin";
 }
 
@@ -18,15 +20,20 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (username: string, password: string) => Promise<void>;
   register: (userData: RegisterData) => Promise<void>;
   logout: () => void;
 }
 
 export interface RegisterData {
-  firstName: string;
-  lastName: string;
+  uin: string;
+  uinForeigner?: string;
+  nameCyrillic: string;
+  nameLatin: string;
   email: string;
+  phoneNumber: string;
+  address: string;
+  username: string;
   password: string;
 }
 
@@ -63,12 +70,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   // Login user
-  const login = async (email: string, password: string): Promise<void> => {
+  const login = async (username: string, password: string): Promise<void> => {
     try {
       setIsLoading(true);
       setError(null);
 
-      const response = await api.post("/auth/login", { email, password });
+      const response = await api.post("/auth/login", { username, password });
 
       localStorage.setItem("token", response.data.token);
       setUser(response.data.user);
