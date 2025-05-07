@@ -74,7 +74,7 @@ export default function LoginForm() {
         <div className="text-sm">
           <Link
             href="/auth/register"
-            className="font-medium text-blue-600 hover:text-blue-500"
+            className="font-medium text-[var(--primary)]"
           >
             Don't have an account? Sign up
           </Link>

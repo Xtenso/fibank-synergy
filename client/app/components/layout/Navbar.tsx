@@ -45,7 +45,6 @@ export default function Navbar() {
 
           <div className="flex items-center space-x-4">
             {isAuthenticated ? (
-              // Authenticated user navigation
               <div className="flex items-center space-x-4">
                 <span className="text-sm text-gray-700 hidden sm:inline-block">
                   {user?.nameCyrillic}
@@ -58,13 +57,8 @@ export default function Navbar() {
                 </button>
               </div>
             ) : (
-              // Non-authenticated user navigation
               <>
-                {pathname === "/auth/login" ? (
-                  <span className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-blue-600">
-                    Log in
-                  </span>
-                ) : (
+                {pathname !== "/auth/login" && (
                   <Link
                     href="/auth/login"
                     className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -73,11 +67,7 @@ export default function Navbar() {
                   </Link>
                 )}
 
-                {pathname === "/auth/register" ? (
-                  <span className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white">
-                    Sign up
-                  </span>
-                ) : (
+                {pathname !== "/auth/register" && (
                   <Link
                     href="/auth/register"
                     className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
