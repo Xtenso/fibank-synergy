@@ -1,20 +1,19 @@
 "use client";
 
 import Image from "next/image";
-import { useTranslations, useLocale } from "next-intl"; // Add useLocale import
+import { useTranslations, useLocale } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
 import { useAuth } from "../../lib/auth";
 import { Link } from "@/i18n/navigation";
 import LanguageSwitcher from "./LanguageSwitcher";
 
 export default function Navbar() {
-  const locale = useLocale(); // Get current locale
+  const locale = useLocale();
   const pathname = usePathname();
   const { user, isAuthenticated, logout } = useAuth();
   const t = useTranslations("auth");
   const tDash = useTranslations("dashboard");
 
-  // Determine which name to display based on current language
   const displayName = locale === "bg" ? user?.nameCyrillic : user?.nameLatin;
 
   return (
@@ -57,7 +56,7 @@ export default function Navbar() {
             {isAuthenticated ? (
               <div className="flex items-center space-x-4">
                 <span className="text-sm text-gray-700 hidden sm:inline-block">
-                  {displayName} {/* Use the dynamically determined name */}
+                  {displayName}
                 </span>
                 <button
                   onClick={logout}

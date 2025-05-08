@@ -3,31 +3,81 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "../../lib/auth";
-import { Button } from "@heroui/button";
-import Input from "../ui/Input";
+import { Form, Button, Input } from "@heroui/react";
 import { Link } from "@/i18n/navigation";
 
 export default function LoginForm() {
   const t = useTranslations("auth");
   const { login, error: authError } = useAuth();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errors, setErrors] = useState<{
-    username?: string;
-    password?: string;
-  }>({});
+  const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>(
+    {}
+  );
+  const [validationErrors, setValidationErrors] = useState<
+    Record<string, string>
+  >({});
+
+  const handleValueChange = (field: string, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const validateField = (field: string): string | null => {
+    switch (field) {
+      case "username":
+        if (!formData.username) {
+          return t("errors.usernameRequired");
+        }
+        break;
+      case "password":
+        if (!formData.password) {
+          return t("errors.passwordRequired");
+        } else if (formData.password.length < 6) {
+          return t("errors.passwordLength");
+        }
+        break;
+    }
+    return null;
+  };
+
+  const handleBlur = (field: string) => {
+    setTouchedFields((prev) => ({
+      ...prev,
+      [field]: true,
+    }));
+
+    const error = validateField(field);
+
+    setValidationErrors((prev) => {
+      if (error) {
+        return {
+          ...prev,
+          [field]: error,
+        };
+      } else {
+        const { [field]: _, ...rest } = prev;
+        return rest;
+      }
+    });
+  };
 
   const validateForm = () => {
-    const newErrors: { username?: string; password?: string } = {};
+    const newErrors: Record<string, string> = {};
 
-    if (!username) newErrors.username = t("errors.usernameRequired");
+    Object.keys(formData).forEach((field) => {
+      const error = validateField(field);
+      if (error) {
+        newErrors[field] = error;
+      }
+    });
 
-    if (!password) newErrors.password = t("errors.passwordRequired");
-    else if (password.length < 6)
-      newErrors.password = t("errors.passwordLength");
-
-    setErrors(newErrors);
+    setValidationErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
@@ -38,16 +88,15 @@ export default function LoginForm() {
 
     setIsSubmitting(true);
     try {
-      await login(username, password);
+      await login(formData.username, formData.password);
     } catch (error) {
-      // Error is handled in auth context
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <form className="space-y-6" onSubmit={handleSubmit}>
+    <Form className="space-y-6" onSubmit={handleSubmit}>
       {authError && (
         <div className="p-3 rounded bg-red-50 border border-red-200 text-red-700">
           {authError}
@@ -56,20 +105,28 @@ export default function LoginForm() {
 
       <Input
         label={t("username")}
+        labelPlacement="outside"
         type="text"
         id="username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        error={errors.username}
+        isRequired
+        value={formData.username}
+        onValueChange={(value) => handleValueChange("username", value)}
+        onBlur={() => handleBlur("username")}
+        isInvalid={!!validationErrors.username}
+        errorMessage={validationErrors.username}
       />
 
       <Input
         label={t("password")}
+        labelPlacement="outside"
         type="password"
         id="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        error={errors.password}
+        isRequired
+        value={formData.password}
+        onValueChange={(value) => handleValueChange("password", value)}
+        onBlur={() => handleBlur("password")}
+        isInvalid={!!validationErrors.password}
+        errorMessage={validationErrors.password}
       />
 
       <div className="flex items-center justify-between">
@@ -83,9 +140,9 @@ export default function LoginForm() {
         </div>
       </div>
 
-      <Button type="submit" fullWidth isLoading={isSubmitting}>
+      <Button type="submit" fullWidth isLoading={isSubmitting} color="primary">
         {t("login")}
       </Button>
-    </form>
+    </Form>
   );
 }

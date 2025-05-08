@@ -3,8 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "../../lib/auth";
-import Button from "../ui/Button";
-import Input from "../ui/Input";
+import { Form, Input, Button, Checkbox } from "@heroui/react";
 import { Link } from "@/i18n/navigation";
 
 export default function RegisterForm() {
@@ -24,122 +23,179 @@ export default function RegisterForm() {
     confirmPassword: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errors, setErrors] = useState<{
-    uin?: string;
-    uinForeigner?: string;
-    nameCyrillic?: string;
-    nameLatin?: string;
-    email?: string;
-    phoneNumber?: string;
-    address?: string;
-    username?: string;
-    password?: string;
-    confirmPassword?: string;
-  }>({});
+  const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>(
+    {}
+  );
+  const [validationErrors, setValidationErrors] = useState<
+    Record<string, string>
+  >({});
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
+  const handleValueChange = (field: string, value: string) => {
     setFormData((prevData) => ({
       ...prevData,
-      [id]: value,
+      [field]: value,
     }));
   };
 
+  const validateField = (field: string): string | null => {
+    switch (field) {
+      case "uin":
+        if (!formData.uin) {
+          return tUser("errors.uinRequired");
+        } else if (formData.uin.length !== 10) {
+          return tUser("errors.uinLength");
+        } else if (!/^[0-9]+$/.test(formData.uin)) {
+          return tUser("errors.uinFormat");
+        }
+        break;
+
+      case "nameCyrillic":
+        if (!formData.nameCyrillic) {
+          return tUser("errors.nameCyrillicRequired");
+        } else if (!/^[\u0400-\u04FF\s-]+$/.test(formData.nameCyrillic)) {
+          return tUser("errors.nameCyrillicFormat");
+        } else if (formData.nameCyrillic.trim().split(/\s+/).length < 2) {
+          return tUser("errors.nameFullRequired");
+        } else if (
+          formData.nameCyrillic
+            .trim()
+            .split(/\s+/)
+            .some((part) => part.length < 3)
+        ) {
+          return tUser("errors.namePartLength");
+        }
+        break;
+
+      case "nameLatin":
+        if (!formData.nameLatin) {
+          return tUser("errors.nameLatinRequired");
+        } else if (!/^[A-Za-z\s-]+$/.test(formData.nameLatin)) {
+          return tUser("errors.nameLatinFormat");
+        } else if (formData.nameLatin.trim().split(/\s+/).length < 2) {
+          return tUser("errors.nameFullRequired");
+        } else if (
+          formData.nameLatin
+            .trim()
+            .split(/\s+/)
+            .some((part) => part.length < 3)
+        ) {
+          return tUser("errors.namePartLength");
+        }
+        break;
+
+      case "phoneNumber":
+        if (!formData.phoneNumber) {
+          return tUser("errors.phoneRequired");
+        } else if (formData.phoneNumber.length < 10) {
+          return tUser("errors.phoneLength");
+        } else if (!/^\+?[0-9\s-]+$/.test(formData.phoneNumber)) {
+          return tUser("errors.phoneFormat");
+        }
+        break;
+
+      case "address":
+        if (!formData.address) {
+          return tUser("errors.addressRequired");
+        } else if (formData.address.length < 10) {
+          return tUser("errors.addressLength");
+        }
+        break;
+
+      case "username":
+        if (!formData.username) {
+          return t("errors.usernameRequired");
+        } else if (formData.username.length < 5) {
+          return t("errors.usernameMinLength");
+        } else if (!/^[a-zA-Z_-]+$/.test(formData.username)) {
+          return t("errors.usernameFormat");
+        }
+        break;
+
+      case "email":
+        if (!formData.email) {
+          return tUser("errors.emailRequired");
+        } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
+          return tUser("errors.emailInvalid");
+        }
+        break;
+
+      case "password":
+        if (!formData.password) {
+          return t("errors.passwordRequired");
+        } else if (formData.password.length < 6) {
+          return t("errors.passwordLength");
+        } else if (formData.password.length > 24) {
+          return t("errors.passwordMaxLength");
+        } else if (!/[a-zA-Z]/.test(formData.password)) {
+          return t("errors.passwordLetter");
+        } else if (!/[0-9]/.test(formData.password)) {
+          return t("errors.passwordNumber");
+        } else if (
+          !/^[a-zA-Z0-9!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+$/.test(
+            formData.password
+          )
+        ) {
+          return t("errors.passwordFormat");
+        }
+        if (touchedFields.confirmPassword && formData.confirmPassword) {
+          const confirmError = validateField("confirmPassword");
+          if (confirmError) {
+            setValidationErrors((prev) => ({
+              ...prev,
+              confirmPassword: confirmError,
+            }));
+          } else {
+            setValidationErrors((prev) => {
+              const { confirmPassword, ...rest } = prev;
+              return rest;
+            });
+          }
+        }
+        break;
+
+      case "confirmPassword":
+        if (!formData.confirmPassword) {
+          return t("errors.confirmPasswordRequired");
+        } else if (formData.confirmPassword !== formData.password) {
+          return t("errors.passwordsDoNotMatch");
+        }
+        break;
+    }
+    return null;
+  };
+
+  const handleBlur = (field: string) => {
+    setTouchedFields((prev) => ({
+      ...prev,
+      [field]: true,
+    }));
+
+    const error = validateField(field);
+
+    setValidationErrors((prev) => {
+      if (error) {
+        return {
+          ...prev,
+          [field]: error,
+        };
+      } else {
+        const { [field]: _, ...rest } = prev;
+        return rest;
+      }
+    });
+  };
+
   const validateForm = () => {
-    const newErrors: any = {};
+    const newErrors: Record<string, string> = {};
 
-    // Required fields
-    if (!formData.uin) {
-      newErrors.uin = tUser("errors.uinRequired");
-    } else if (formData.uin.length != 10) {
-      newErrors.uin = tUser("errors.uinLength");
-    } else if (!/^[0-9]+$/.test(formData.uin)) {
-      newErrors.uin = tUser("errors.uinFormat");
-    }
+    Object.keys(formData).forEach((field) => {
+      const error = validateField(field);
+      if (error) {
+        newErrors[field] = error;
+      }
+    });
 
-    // Cyrillic name validation
-    if (!formData.nameCyrillic) {
-      newErrors.nameCyrillic = tUser("errors.nameCyrillicRequired");
-    } else if (!/^[\u0400-\u04FF\s-]+$/.test(formData.nameCyrillic)) {
-      newErrors.nameCyrillic = tUser("errors.nameCyrillicFormat");
-    } else if (formData.nameCyrillic.trim().split(/\s+/).length < 2) {
-      newErrors.nameCyrillic = tUser("errors.nameFullRequired");
-    } else if (
-      formData.nameCyrillic
-        .trim()
-        .split(/\s+/)
-        .some((part) => part.length < 3)
-    ) {
-      newErrors.nameCyrillic = tUser("errors.namePartLength");
-    }
-
-    // Latin name validation
-    if (!formData.nameLatin) {
-      newErrors.nameLatin = tUser("errors.nameLatinRequired");
-    } else if (!/^[A-Za-z\s-]+$/.test(formData.nameLatin)) {
-      newErrors.nameLatin = tUser("errors.nameLatinFormat");
-    } else if (formData.nameLatin.trim().split(/\s+/).length < 2) {
-      newErrors.nameLatin = tUser("errors.nameFullRequired");
-    } else if (
-      formData.nameLatin
-        .trim()
-        .split(/\s+/)
-        .some((part) => part.length < 3)
-    ) {
-      newErrors.nameLatin = tUser("errors.namePartLength");
-    }
-
-    if (!formData.phoneNumber) {
-      newErrors.phoneNumber = tUser("errors.phoneRequired");
-    } else if (formData.phoneNumber.length < 10) {
-      newErrors.phoneNumber = tUser("errors.phoneLength");
-    } else if (!/^\+?[0-9\s-]+$/.test(formData.phoneNumber)) {
-      newErrors.phoneNumber = tUser("errors.phoneFormat");
-    }
-
-    if (!formData.address) {
-      newErrors.address = tUser("errors.addressRequired");
-    } else if (formData.address.length < 10) {
-      newErrors.address = tUser("errors.addressLength");
-    }
-
-    if (!formData.username) {
-      newErrors.username = t("errors.usernameRequired");
-    } else if (formData.username.length < 5) {
-      newErrors.username = t("errors.usernameMinLength");
-    } else if (!/^[a-zA-Z_-]+$/.test(formData.username)) {
-      newErrors.username = t("errors.usernameFormat");
-    }
-
-    // Email validation
-    if (!formData.email) newErrors.email = tUser("errors.emailRequired");
-    else if (!/^\S+@\S+\.\S+$/.test(formData.email))
-      newErrors.email = tUser("errors.emailInvalid");
-
-    // Password validation
-    if (!formData.password) {
-      newErrors.password = t("errors.passwordRequired");
-    } else if (formData.password.length < 6) {
-      newErrors.password = t("errors.passwordLength");
-    } else if (formData.password.length > 24) {
-      newErrors.password = t("errors.passwordMaxLength");
-    } else if (!/[a-zA-Z]/.test(formData.password)) {
-      newErrors.password = t("errors.passwordLetter");
-    } else if (!/[0-9]/.test(formData.password)) {
-      newErrors.password = t("errors.passwordNumber");
-    } else if (
-      !/^[a-zA-Z0-9!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+$/.test(formData.password)
-    ) {
-      newErrors.password = t("errors.passwordFormat");
-    }
-
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = t("errors.confirmPasswordRequired");
-    } else if (formData.confirmPassword !== formData.password) {
-      newErrors.confirmPassword = t("errors.passwordsDoNotMatch");
-    }
-
-    setErrors(newErrors);
+    setValidationErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
@@ -153,14 +209,13 @@ export default function RegisterForm() {
       const { confirmPassword, ...registerData } = formData;
       await register(registerData);
     } catch (error) {
-      // Error is handled in auth context
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <form className="space-y-6" onSubmit={handleSubmit}>
+    <Form className="space-y-4" onSubmit={handleSubmit}>
       {authError && (
         <div className="p-3 rounded bg-red-50 border border-red-200 text-red-700">
           {authError}
@@ -169,90 +224,129 @@ export default function RegisterForm() {
 
       <Input
         label={tUser("uin")}
+        labelPlacement="outside"
         id="uin"
+        isRequired
         value={formData.uin}
-        onChange={handleChange}
-        error={errors.uin}
+        onValueChange={(value) => handleValueChange("uin", value)}
+        onBlur={() => handleBlur("uin")}
+        isInvalid={!!validationErrors.uin}
+        errorMessage={validationErrors.uin}
       />
 
       <Input
         label={tUser("uinForeigner")}
+        labelPlacement="outside"
         id="uinForeigner"
         value={formData.uinForeigner}
-        onChange={handleChange}
-        error={errors.uinForeigner}
+        onValueChange={(value) => handleValueChange("uinForeigner", value)}
+        onBlur={() => handleBlur("uinForeigner")}
+        isInvalid={!!validationErrors.uinForeigner}
+        errorMessage={validationErrors.uinForeigner}
       />
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="flex flex-col sm:flex-row sm:gap-4 w-full">
         <Input
           label={tUser("nameCyrillic")}
+          labelPlacement="outside"
           id="nameCyrillic"
+          isRequired
           value={formData.nameCyrillic}
-          onChange={handleChange}
-          error={errors.nameCyrillic}
+          onValueChange={(value) => handleValueChange("nameCyrillic", value)}
+          onBlur={() => handleBlur("nameCyrillic")}
+          isInvalid={!!validationErrors.nameCyrillic}
+          errorMessage={validationErrors.nameCyrillic}
         />
 
         <Input
           label={tUser("nameLatin")}
+          labelPlacement="outside"
           id="nameLatin"
+          isRequired
           value={formData.nameLatin}
-          onChange={handleChange}
-          error={errors.nameLatin}
+          onValueChange={(value) => handleValueChange("nameLatin", value)}
+          onBlur={() => handleBlur("nameLatin")}
+          isInvalid={!!validationErrors.nameLatin}
+          errorMessage={validationErrors.nameLatin}
         />
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="flex flex-col sm:flex-row sm:gap-4 w-full">
         <Input
           label={tUser("email")}
+          labelPlacement="outside"
           type="email"
           id="email"
+          isRequired
           value={formData.email}
-          onChange={handleChange}
-          error={errors.email}
+          onValueChange={(value) => handleValueChange("email", value)}
+          onBlur={() => handleBlur("email")}
+          isInvalid={!!validationErrors.email}
+          errorMessage={validationErrors.email}
         />
 
         <Input
           label={tUser("phoneNumber")}
+          labelPlacement="outside"
           type="tel"
           id="phoneNumber"
+          isRequired
           value={formData.phoneNumber}
-          onChange={handleChange}
-          error={errors.phoneNumber}
+          onValueChange={(value) => handleValueChange("phoneNumber", value)}
+          onBlur={() => handleBlur("phoneNumber")}
+          isInvalid={!!validationErrors.phoneNumber}
+          errorMessage={validationErrors.phoneNumber}
         />
       </div>
 
       <Input
         label={tUser("address")}
+        labelPlacement="outside"
         id="address"
+        isRequired
         value={formData.address}
-        onChange={handleChange}
-        error={errors.address}
+        onValueChange={(value) => handleValueChange("address", value)}
+        onBlur={() => handleBlur("address")}
+        isInvalid={!!validationErrors.address}
+        errorMessage={validationErrors.address}
       />
 
       <Input
-        label={tUser("username")}
+        label={t("username")}
+        labelPlacement="outside"
         id="username"
+        isRequired
         value={formData.username}
-        onChange={handleChange}
-        error={errors.username}
+        onValueChange={(value) => handleValueChange("username", value)}
+        onBlur={() => handleBlur("username")}
+        isInvalid={!!validationErrors.username}
+        errorMessage={validationErrors.username}
       />
 
       <Input
-        label={tUser("password")}
+        label={t("password")}
+        labelPlacement="outside"
         type="password"
         id="password"
+        isRequired
         value={formData.password}
-        onChange={handleChange}
-        error={errors.password}
+        onValueChange={(value) => handleValueChange("password", value)}
+        onBlur={() => handleBlur("password")}
+        isInvalid={!!validationErrors.password}
+        errorMessage={validationErrors.password}
       />
 
       <Input
-        label={tUser("confirmPassword")}
+        label={t("confirmPassword")}
+        labelPlacement="outside"
         type="password"
         id="confirmPassword"
+        isRequired
         value={formData.confirmPassword}
-        onChange={handleChange}
-        error={errors.confirmPassword}
+        onValueChange={(value) => handleValueChange("confirmPassword", value)}
+        onBlur={() => handleBlur("confirmPassword")}
+        isInvalid={!!validationErrors.confirmPassword}
+        errorMessage={validationErrors.confirmPassword}
       />
 
       <div className="flex items-center justify-between">
@@ -266,9 +360,9 @@ export default function RegisterForm() {
         </div>
       </div>
 
-      <Button type="submit" fullWidth isLoading={isSubmitting}>
+      <Button type="submit" fullWidth isLoading={isSubmitting} color="primary">
         {t("register")}
       </Button>
-    </form>
+    </Form>
   );
 }

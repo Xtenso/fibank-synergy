@@ -1,9 +1,39 @@
+"use client";
+
 import { useTranslations } from "next-intl";
+import { useEffect, useRef } from "react";
+import { useRouter } from "@/i18n/navigation";
+import { addToast } from "@heroui/react";
+import { useAuth } from "../../lib/auth";
 import Navbar from "../../components/layout/Navbar";
 import LoginForm from "../../components/auth/LoginForm";
 
 export default function LoginPage() {
   const t = useTranslations("auth");
+  const { isAuthenticated, justLoggedIn } = useAuth();
+  const router = useRouter();
+  const redirectedRef = useRef(false);
+
+  useEffect(() => {
+    if (isAuthenticated && !redirectedRef.current) {
+      redirectedRef.current = true;
+
+      if (!justLoggedIn) {
+        addToast({
+          title: t("alreadyLoggedIn"),
+          description: t("redirectingToDashboard"),
+          variant: "solid",
+          color: "primary",
+        });
+      }
+
+      router.push("/dashboard");
+    }
+  }, [isAuthenticated, router, t, justLoggedIn]);
+
+  if (isAuthenticated) {
+    return null;
+  }
 
   return (
     <div>
