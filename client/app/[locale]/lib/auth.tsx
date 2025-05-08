@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useRef } from "react";
 import { useRouter } from "@/i18n/navigation";
 import api from "./api";
 import { addToast } from "@heroui/react";
@@ -8,6 +8,7 @@ import { useTranslations } from "next-intl";
 
 const TOKEN_KEY = "fibank_token";
 const USER_KEY = "fibank_user";
+const LOGOUT_FLAG = "just_logged_out";
 
 export interface User {
   id: string;
@@ -190,6 +191,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
 
+    // Flag to not show warning on log out
+    sessionStorage.setItem(LOGOUT_FLAG, "true");
+    setTimeout(() => {
+      sessionStorage.removeItem(LOGOUT_FLAG);
+    }, 3000);
+
     setUser(null);
 
     addToast({
@@ -231,12 +238,30 @@ export function useAuth() {
 export function useRequireAuth() {
   const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
+  const t = useTranslations("auth");
+  const redirectedRef = useRef(false);
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
+    const justLoggedOut = sessionStorage.getItem(LOGOUT_FLAG) === "true";
+
+    if (
+      !isLoading &&
+      !isAuthenticated &&
+      !redirectedRef.current &&
+      !justLoggedOut
+    ) {
+      redirectedRef.current = true;
+
+      addToast({
+        title: t("authRequired"),
+        description: t("redirectingToLogin"),
+        variant: "solid",
+        color: "warning",
+      });
+
       router.push("/auth/login");
     }
-  }, [isAuthenticated, isLoading, router]);
+  }, [isAuthenticated, isLoading, router, t]);
 
   return { isLoading };
 }

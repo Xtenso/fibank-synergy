@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "../../lib/auth";
-import { Form, Input, Button, Checkbox } from "@heroui/react";
+import { Form, Input, Button, addToast } from "@heroui/react";
 import { Link } from "@/i18n/navigation";
 
 export default function RegisterForm() {
@@ -29,6 +29,26 @@ export default function RegisterForm() {
   const [validationErrors, setValidationErrors] = useState<
     Record<string, string>
   >({});
+
+  // Map backend errors to translation keys; fallback to registerError
+  useEffect(() => {
+    if (authError) {
+      let errorKey = "registerError";
+
+      if (authError.includes("email already exists")) {
+        errorKey = "emailExists";
+      } else if (authError.includes("Username already taken")) {
+        errorKey = "usernameExists";
+      }
+
+      addToast({
+        title: t("registerFailed"),
+        description: t(errorKey),
+        variant: "solid",
+        color: "danger",
+      });
+    }
+  }, [authError, t]);
 
   const handleValueChange = (field: string, value: string) => {
     setFormData((prevData) => ({
@@ -216,12 +236,6 @@ export default function RegisterForm() {
 
   return (
     <Form className="space-y-4" onSubmit={handleSubmit}>
-      {authError && (
-        <div className="p-3 rounded bg-red-50 border border-red-200 text-red-700">
-          {authError}
-        </div>
-      )}
-
       <Input
         label={tUser("uin")}
         labelPlacement="outside"

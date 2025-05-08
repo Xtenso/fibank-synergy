@@ -23,7 +23,7 @@ export default function LoginPage() {
           title: t("alreadyLoggedIn"),
           description: t("redirectingToDashboard"),
           variant: "solid",
-          color: "primary",
+          color: "warning",
         });
       }
 

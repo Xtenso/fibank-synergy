@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "../../lib/auth";
-import { Form, Button, Input } from "@heroui/react";
+import { Form, Button, Input, addToast } from "@heroui/react";
 import { Link } from "@/i18n/navigation";
 
 export default function LoginForm() {
@@ -20,6 +20,24 @@ export default function LoginForm() {
   const [validationErrors, setValidationErrors] = useState<
     Record<string, string>
   >({});
+
+  // Map backend errors to translation keys; fallback to loginError
+  useEffect(() => {
+    if (authError) {
+      let errorKey = "loginError";
+
+      if (authError.includes("Invalid credentials")) {
+        errorKey = "invalidCredentials";
+      }
+
+      addToast({
+        title: t("loginFailed"),
+        description: t(errorKey),
+        variant: "solid",
+        color: "danger",
+      });
+    }
+  }, [authError, t]);
 
   const handleValueChange = (field: string, value: string) => {
     setFormData((prev) => ({
@@ -97,12 +115,6 @@ export default function LoginForm() {
 
   return (
     <Form className="space-y-6" onSubmit={handleSubmit}>
-      {authError && (
-        <div className="p-3 rounded bg-red-50 border border-red-200 text-red-700">
-          {authError}
-        </div>
-      )}
-
       <Input
         label={t("username")}
         labelPlacement="outside"

@@ -24,7 +24,7 @@ export default function RegisterPage() {
           title: t("alreadyLoggedIn"),
           description: t("redirectingToDashboard"),
           variant: "solid",
-          color: "primary",
+          color: "warning",
         });
       }
 

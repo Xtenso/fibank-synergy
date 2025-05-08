@@ -20,6 +20,12 @@
     "invalidCredentials": "Invalid username or password",
     "loginError": "An error occurred during login",
     "registerError": "An error occurred during registration",
+    "authRequired": "Authentication Required",
+    "redirectingToLogin": "You need to be logged in to access this page. Redirecting to login...",
+    "loginFailed": "Login Failed",
+    "registerFailed": "Registration Failed",
+    "emailExists": "A user with this email already exists",
+    "usernameExists": "This username is already taken",
     "errors": {
       "usernameRequired": "Username is required",
       "passwordRequired": "Password is required",
