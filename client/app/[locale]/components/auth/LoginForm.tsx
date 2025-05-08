@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { useAuth } from "../../lib/auth";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 export default function LoginForm() {
+  const t = useTranslations("auth");
   const { login, error: authError } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -19,11 +21,11 @@ export default function LoginForm() {
   const validateForm = () => {
     const newErrors: { username?: string; password?: string } = {};
 
-    if (!username) newErrors.username = "Username is required";
+    if (!username) newErrors.username = t("errors.usernameRequired");
 
-    if (!password) newErrors.password = "Password is required";
+    if (!password) newErrors.password = t("errors.passwordRequired");
     else if (password.length < 6)
-      newErrors.password = "Password must be at least 6 characters";
+      newErrors.password = t("errors.passwordLength");
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -53,7 +55,7 @@ export default function LoginForm() {
       )}
 
       <Input
-        label="Username"
+        label={t("username")}
         type="text"
         id="username"
         value={username}
@@ -62,7 +64,7 @@ export default function LoginForm() {
       />
 
       <Input
-        label="Password"
+        label={t("password")}
         type="password"
         id="password"
         value={password}
@@ -76,13 +78,13 @@ export default function LoginForm() {
             href="/auth/register"
             className="font-medium text-[var(--primary)]"
           >
-            Don't have an account? Sign up
+            {t("noAccount")}
           </Link>
         </div>
       </div>
 
       <Button type="submit" fullWidth isLoading={isSubmitting}>
-        Sign in
+        {t("login")}
       </Button>
     </form>
   );

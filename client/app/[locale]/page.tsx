@@ -1,6 +1,9 @@
+import { useTranslations } from "next-intl";
 import Navbar from "./components/layout/Navbar";
 
 export default function Home() {
+  const t = useTranslations("home");
+
   return (
     <div className="bg-white min-h-screen">
       <Navbar />
@@ -12,10 +15,10 @@ export default function Home() {
               FiBank Synergy
             </h2>
             <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-              Secure Banking Platform
+              {t("title")}
             </p>
             <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
-              Access your accounts securely and manage your finances with ease.
+              {t("subtitle")}
             </p>
           </div>
 
@@ -83,9 +86,7 @@ export default function Home() {
 
       <footer className="bg-gray-50 mt-12">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-sm text-gray-500">
-            © 2023 FiBank Synergy. All rights reserved.
-          </p>
+          <p className="text-center text-sm text-gray-500">{t("footer")}</p>
         </div>
       </footer>
     </div>

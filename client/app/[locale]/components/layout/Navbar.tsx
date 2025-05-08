@@ -1,13 +1,21 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { useTranslations, useLocale } from "next-intl"; // Add useLocale import
+import { usePathname } from "@/i18n/navigation";
 import { useAuth } from "../../lib/auth";
+import { Link } from "@/i18n/navigation";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 export default function Navbar() {
+  const locale = useLocale(); // Get current locale
   const pathname = usePathname();
   const { user, isAuthenticated, logout } = useAuth();
+  const t = useTranslations("auth");
+  const tDash = useTranslations("dashboard");
+
+  // Determine which name to display based on current language
+  const displayName = locale === "bg" ? user?.nameCyrillic : user?.nameLatin;
 
   return (
     <header className="bg-white shadow">
@@ -38,22 +46,24 @@ export default function Navbar() {
                     : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
                 } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
               >
-                Dashboard
+                {tDash("title")}
               </Link>
             )}
           </div>
 
           <div className="flex items-center space-x-4">
+            <LanguageSwitcher />
+
             {isAuthenticated ? (
               <div className="flex items-center space-x-4">
                 <span className="text-sm text-gray-700 hidden sm:inline-block">
-                  {user?.nameCyrillic}
+                  {displayName} {/* Use the dynamically determined name */}
                 </span>
                 <button
                   onClick={logout}
                   className="px-3 py-1 cursor-pointer text-sm rounded-md bg-red-50 text-red-700 hover:bg-red-100"
                 >
-                  Sign out
+                  {t("signOut")}
                 </button>
               </div>
             ) : (
@@ -63,7 +73,7 @@ export default function Navbar() {
                     href="/auth/login"
                     className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                   >
-                    Log in
+                    {t("login")}
                   </Link>
                 )}
 
@@ -72,7 +82,7 @@ export default function Navbar() {
                     href="/auth/register"
                     className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                   >
-                    Sign up
+                    {t("register")}
                   </Link>
                 )}
               </>

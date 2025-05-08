@@ -1,12 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { useAuth } from "../../lib/auth";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 export default function RegisterForm() {
+  const t = useTranslations("auth");
+  const tUser = useTranslations("user");
   const { register, error: authError } = useAuth();
   const [formData, setFormData] = useState({
     uin: "",
@@ -47,97 +50,93 @@ export default function RegisterForm() {
 
     // Required fields
     if (!formData.uin) {
-      newErrors.uin = "UIN is required";
+      newErrors.uin = tUser("errors.uinRequired");
     } else if (formData.uin.length != 10) {
-      newErrors.uin = "UIN must be 10 characters long";
+      newErrors.uin = tUser("errors.uinLength");
     } else if (!/^[0-9]+$/.test(formData.uin)) {
-      newErrors.uin = "UIN can only contain numbers";
+      newErrors.uin = tUser("errors.uinFormat");
     }
 
     // Cyrillic name validation
     if (!formData.nameCyrillic) {
-      newErrors.nameCyrillic = "Name in Cyrillic is required";
+      newErrors.nameCyrillic = tUser("errors.nameCyrillicRequired");
     } else if (!/^[\u0400-\u04FF\s-]+$/.test(formData.nameCyrillic)) {
-      newErrors.nameCyrillic = "Please use only Cyrillic characters";
+      newErrors.nameCyrillic = tUser("errors.nameCyrillicFormat");
     } else if (formData.nameCyrillic.trim().split(/\s+/).length < 2) {
-      newErrors.nameCyrillic = "Please enter full name (first and last name)";
+      newErrors.nameCyrillic = tUser("errors.nameFullRequired");
     } else if (
       formData.nameCyrillic
         .trim()
         .split(/\s+/)
         .some((part) => part.length < 3)
     ) {
-      newErrors.nameCyrillic =
-        "Each part of your name must be at least 3 characters";
+      newErrors.nameCyrillic = tUser("errors.namePartLength");
     }
 
     // Latin name validation
     if (!formData.nameLatin) {
-      newErrors.nameLatin = "Name in Latin is required";
+      newErrors.nameLatin = tUser("errors.nameLatinRequired");
     } else if (!/^[A-Za-z\s-]+$/.test(formData.nameLatin)) {
-      newErrors.nameLatin = "Please use only Latin characters";
+      newErrors.nameLatin = tUser("errors.nameLatinFormat");
     } else if (formData.nameLatin.trim().split(/\s+/).length < 2) {
-      newErrors.nameLatin = "Please enter full name (first and last name)";
+      newErrors.nameLatin = tUser("errors.nameFullRequired");
     } else if (
       formData.nameLatin
         .trim()
         .split(/\s+/)
         .some((part) => part.length < 3)
     ) {
-      newErrors.nameLatin =
-        "Each part of your name must be at least 3 characters";
+      newErrors.nameLatin = tUser("errors.namePartLength");
     }
 
     if (!formData.phoneNumber) {
-      newErrors.phoneNumber = "Phone number is required";
+      newErrors.phoneNumber = tUser("errors.phoneRequired");
     } else if (formData.phoneNumber.length < 10) {
-      newErrors.phoneNumber = "Phone number must be 10 characters long";
+      newErrors.phoneNumber = tUser("errors.phoneLength");
     } else if (!/^\+?[0-9\s-]+$/.test(formData.phoneNumber)) {
-      newErrors.phoneNumber =
-        "Phone number can only contain numbers, spaces, + and -";
+      newErrors.phoneNumber = tUser("errors.phoneFormat");
     }
 
     if (!formData.address) {
-      newErrors.address = "Address is required";
+      newErrors.address = tUser("errors.addressRequired");
     } else if (formData.address.length < 10) {
-      newErrors.address = "Address must be at least 10 characters long";
+      newErrors.address = tUser("errors.addressLength");
     }
 
     if (!formData.username) {
-      newErrors.username = "Username is required";
+      newErrors.username = t("errors.usernameRequired");
     } else if (formData.username.length < 5) {
-      newErrors.username = "Username must be at least 5 characters long";
+      newErrors.username = t("errors.usernameMinLength");
     } else if (!/^[a-zA-Z_-]+$/.test(formData.username)) {
-      newErrors.username = "Username can only contain Latin letters, _ and -";
+      newErrors.username = t("errors.usernameFormat");
     }
 
     // Email validation
-    if (!formData.email) newErrors.email = "Email is required";
+    if (!formData.email) newErrors.email = tUser("errors.emailRequired");
     else if (!/^\S+@\S+\.\S+$/.test(formData.email))
-      newErrors.email = "Email is invalid";
+      newErrors.email = tUser("errors.emailInvalid");
 
     // Password validation
     if (!formData.password) {
-      newErrors.password = "Password is required";
+      newErrors.password = t("errors.passwordRequired");
     } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
+      newErrors.password = t("errors.passwordLength");
     } else if (formData.password.length > 24) {
-      newErrors.password = "Password must be at most 24 characters";
+      newErrors.password = t("errors.passwordMaxLength");
     } else if (!/[a-zA-Z]/.test(formData.password)) {
-      newErrors.password = "Password must contain at least one letter";
+      newErrors.password = t("errors.passwordLetter");
     } else if (!/[0-9]/.test(formData.password)) {
-      newErrors.password = "Password must contain at least one number";
+      newErrors.password = t("errors.passwordNumber");
     } else if (
       !/^[a-zA-Z0-9!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+$/.test(formData.password)
     ) {
-      newErrors.password =
-        "Password can only contain Latin letters, numbers, and special characters";
+      newErrors.password = t("errors.passwordFormat");
     }
 
     if (!formData.confirmPassword) {
-      newErrors.confirmPassword = "Please confirm your password";
+      newErrors.confirmPassword = t("errors.confirmPasswordRequired");
     } else if (formData.confirmPassword !== formData.password) {
-      newErrors.confirmPassword = "Passwords don't match";
+      newErrors.confirmPassword = t("errors.passwordsDoNotMatch");
     }
 
     setErrors(newErrors);
@@ -169,7 +168,7 @@ export default function RegisterForm() {
       )}
 
       <Input
-        label="UIN (Personal ID)"
+        label={tUser("uin")}
         id="uin"
         value={formData.uin}
         onChange={handleChange}
@@ -177,7 +176,7 @@ export default function RegisterForm() {
       />
 
       <Input
-        label="UIN Foreigner (Optional)"
+        label={tUser("uinForeigner")}
         id="uinForeigner"
         value={formData.uinForeigner}
         onChange={handleChange}
@@ -186,7 +185,7 @@ export default function RegisterForm() {
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Input
-          label="Name in Cyrillic (Джон Смег)"
+          label={tUser("nameCyrillic")}
           id="nameCyrillic"
           value={formData.nameCyrillic}
           onChange={handleChange}
@@ -194,7 +193,7 @@ export default function RegisterForm() {
         />
 
         <Input
-          label="Name in Latin (John Smeg)"
+          label={tUser("nameLatin")}
           id="nameLatin"
           value={formData.nameLatin}
           onChange={handleChange}
@@ -204,7 +203,7 @@ export default function RegisterForm() {
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Input
-          label="Email address"
+          label={tUser("email")}
           type="email"
           id="email"
           value={formData.email}
@@ -213,7 +212,7 @@ export default function RegisterForm() {
         />
 
         <Input
-          label="Phone number"
+          label={tUser("phoneNumber")}
           type="tel"
           id="phoneNumber"
           value={formData.phoneNumber}
@@ -223,7 +222,7 @@ export default function RegisterForm() {
       </div>
 
       <Input
-        label="Address"
+        label={tUser("address")}
         id="address"
         value={formData.address}
         onChange={handleChange}
@@ -231,7 +230,7 @@ export default function RegisterForm() {
       />
 
       <Input
-        label="Username"
+        label={tUser("username")}
         id="username"
         value={formData.username}
         onChange={handleChange}
@@ -239,7 +238,7 @@ export default function RegisterForm() {
       />
 
       <Input
-        label="Password"
+        label={tUser("password")}
         type="password"
         id="password"
         value={formData.password}
@@ -248,7 +247,7 @@ export default function RegisterForm() {
       />
 
       <Input
-        label="Confirm password"
+        label={tUser("confirmPassword")}
         type="password"
         id="confirmPassword"
         value={formData.confirmPassword}
@@ -260,15 +259,15 @@ export default function RegisterForm() {
         <div className="text-sm">
           <Link
             href="/auth/login"
-            className="font-medium text-blue-600 hover:text-blue-500"
+            className="font-medium text-[var(--primary)]"
           >
-            Already have an account? Sign in
+            {t("alreadyHaveAccount")}
           </Link>
         </div>
       </div>
 
       <Button type="submit" fullWidth isLoading={isSubmitting}>
-        Create account
+        {t("register")}
       </Button>
     </form>
   );

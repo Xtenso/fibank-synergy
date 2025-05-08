@@ -1,0 +1,82 @@
+{
+  "auth": {
+    "login": "Sign in",
+    "register": "Sign up",
+    "signOut": "Sign out",
+    "username": "Username",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "loginTitle": "Sign in to your account",
+    "noAccount": "Don't have an account? Sign up",
+    "alreadyHaveAccount": "Already have an account? Sign in",
+    "errors": {
+      "usernameRequired": "Username is required",
+      "passwordRequired": "Password is required",
+      "passwordLength": "Password must be at least 6 characters",
+      "passwordMaxLength": "Password must be at most 24 characters",
+      "passwordLetter": "Password must contain at least one letter",
+      "passwordNumber": "Password must contain at least one number",
+      "passwordFormat": "Password can only contain Latin letters, numbers, and special characters",
+      "confirmPasswordRequired": "Please confirm your password",
+      "passwordsDoNotMatch": "Passwords don't match",
+      "usernameMinLength": "Username must be at least 5 characters long",
+      "usernameFormat": "Username can only contain Latin letters, _ and -"
+    }
+  },
+
+  "user": {
+    "fullName": "Full name",
+    "uin": "UIN (Personal ID)",
+    "uinForeigner": "UIN Foreigner (Optional)",
+    "nameCyrillic": "Name in Cyrillic (Джон Смег)",
+    "nameLatin": "Name in Latin (John Smeg)",
+    "email": "Email address",
+    "phoneNumber": "Phone number",
+    "address": "Address",
+    "role": "Role",
+    "username": "Username",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "errors": {
+      "uinRequired": "UIN is required",
+      "uinLength": "UIN must be 10 characters long",
+      "uinFormat": "UIN can only contain numbers",
+      "nameCyrillicRequired": "Name in Cyrillic is required",
+      "nameCyrillicFormat": "Please use only Cyrillic characters",
+      "nameFullRequired": "Please enter full name (first and last name)",
+      "namePartLength": "Each part of your name must be at least 3 characters",
+      "nameLatinRequired": "Name in Latin is required",
+      "nameLatinFormat": "Please use only Latin characters",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Email is invalid",
+      "phoneRequired": "Phone number is required",
+      "phoneLength": "Phone number must be 10 characters long",
+      "phoneFormat": "Phone number can only contain numbers, spaces, + and -",
+      "addressRequired": "Address is required",
+      "addressLength": "Address must be at least 10 characters long"
+    }
+  },
+
+  "dashboard": {
+    "title": "Dashboard",
+    "userInfo": "User Information",
+    "personalDetails": "Personal details and account.",
+    "welcomeTitle": "Welcome to FiBank Synergy",
+    "welcomeDescription": "This is your secure dashboard where you can manage your account and access banking services."
+  },
+
+  "home": {
+    "title": "Secure Banking Platform",
+    "subtitle": "Access your accounts securely and manage your finances with ease.",
+    "secureAuthentication": "Secure Authentication",
+    "secureDescription": "Advanced security features with JWT authentication and password hashing to protect your data.",
+    "userFriendly": "User-Friendly Interface",
+    "userFriendlyDescription": "Modern, responsive design with Next.js and Tailwind CSS for a seamless user experience.",
+    "footer": "© 2023 FiBank Synergy. All rights reserved."
+  },
+
+  "register": {
+    "title": "Registration of a new user",
+    "description": "This registration form is only filled in if you do not have a username and password for the Virtual Banking Branch (e-fibank) of FIB. If you already have a username and password, adding access to a new individual or legal entity is done at the bank. If you have forgotten your username and/or password, please visit the bank to receive them."
+  }
+}
