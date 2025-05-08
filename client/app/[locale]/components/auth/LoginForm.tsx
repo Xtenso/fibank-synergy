@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "../../lib/auth";
-import Button from "../ui/Button";
+import { Button } from "@heroui/button";
 import Input from "../ui/Input";
 import { Link } from "@/i18n/navigation";
 

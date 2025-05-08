@@ -5,6 +5,7 @@ import { AuthProvider } from "./lib/auth";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
+import { HeroUIProvider } from "@heroui/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -42,9 +43,11 @@ export default async function LocaleLayout({
   return (
     <html lang={locale}>
       <body className={inter.className}>
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          <AuthProvider>{children}</AuthProvider>
-        </NextIntlClientProvider>
+        <HeroUIProvider>
+          <NextIntlClientProvider locale={locale} messages={messages}>
+            <AuthProvider>{children}</AuthProvider>
+          </NextIntlClientProvider>
+        </HeroUIProvider>
       </body>
     </html>
   );
