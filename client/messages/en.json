@@ -38,6 +38,15 @@
       "passwordsDoNotMatch": "Passwords don't match",
       "usernameMinLength": "Username must be at least 5 characters long",
       "usernameFormat": "Username can only contain Latin letters, _ and -"
+    },
+    "passwordStrength": {
+      "strength": "Password strength:",
+      "label": "Password strength indicator",
+      "veryWeak": "Very weak",
+      "weak": "Weak",
+      "moderate": "Moderate",
+      "strong": "Strong",
+      "veryStrong": "Very strong"
     }
   },
 

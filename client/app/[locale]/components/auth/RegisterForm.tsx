@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "../../lib/auth";
-import { Form, Input, Button, addToast } from "@heroui/react";
+import { Form, Input, Button, addToast, Progress } from "@heroui/react";
 import { Link } from "@/i18n/navigation";
+import { calculatePasswordStrength } from "../../utils/passwordStrength";
 
 export default function RegisterForm() {
   const t = useTranslations("auth");
@@ -21,6 +22,11 @@ export default function RegisterForm() {
     username: "",
     password: "",
     confirmPassword: "",
+  });
+  const [passwordStrength, setPasswordStrength] = useState({
+    score: 0,
+    label: "",
+    color: "default",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>(
@@ -49,6 +55,22 @@ export default function RegisterForm() {
       });
     }
   }, [authError, t]);
+
+  // Calculate password strength whenever password changes
+  useEffect(() => {
+    if (formData.password) {
+      const strength = calculatePasswordStrength(formData.password, (key) =>
+        t(key)
+      );
+      setPasswordStrength(strength);
+    } else {
+      setPasswordStrength({
+        score: 0,
+        label: "",
+        color: "default",
+      });
+    }
+  }, [formData.password, t]);
 
   const handleValueChange = (field: string, value: string) => {
     setFormData((prevData) => ({
@@ -337,18 +359,37 @@ export default function RegisterForm() {
         errorMessage={validationErrors.username}
       />
 
-      <Input
-        label={t("password")}
-        labelPlacement="outside"
-        type="password"
-        id="password"
-        isRequired
-        value={formData.password}
-        onValueChange={(value) => handleValueChange("password", value)}
-        onBlur={() => handleBlur("password")}
-        isInvalid={!!validationErrors.password}
-        errorMessage={validationErrors.password}
-      />
+      <div className="space-y-2 w-full">
+        <Input
+          label={t("password")}
+          labelPlacement="outside"
+          type="password"
+          id="password"
+          isRequired
+          value={formData.password}
+          onValueChange={(value) => handleValueChange("password", value)}
+          onBlur={() => handleBlur("password")}
+          isInvalid={!!validationErrors.password}
+          errorMessage={validationErrors.password}
+        />
+
+        {formData.password && (
+          <div className="space-y-1">
+            <Progress
+              aria-label={t("passwordStrength.label")}
+              color={passwordStrength.color}
+              value={passwordStrength.score}
+              className="h-2"
+            />
+            <div className="flex justify-between text-xs">
+              <span>{t("passwordStrength.strength")}</span>
+              <span className={`font-medium text-${passwordStrength.color}`}>
+                {passwordStrength.label}
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
 
       <Input
         label={t("confirmPassword")}
