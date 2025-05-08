@@ -3,7 +3,16 @@
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "../../lib/auth";
-import { Form, Input, Button, addToast, Progress } from "@heroui/react";
+import {
+  Form,
+  Input,
+  Button,
+  addToast,
+  Progress,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@heroui/react";
 import { Link } from "@/i18n/navigation";
 import { calculatePasswordStrength } from "../../utils/passwordStrength";
 
@@ -279,6 +288,22 @@ export default function RegisterForm() {
         onBlur={() => handleBlur("uinForeigner")}
         isInvalid={!!validationErrors.uinForeigner}
         errorMessage={validationErrors.uinForeigner}
+        endContent={
+          <Popover placement="right">
+            <PopoverTrigger>
+              <Button isIconOnly size="sm" color="primary" radius="full">
+                ?
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent>
+              <div className="px-1 py-2">
+                <div className="text-tiny">
+                  {tUser("uniForeignerPopoverMessage")}
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+        }
       />
 
       <div className="flex flex-col sm:flex-row sm:gap-4 w-full">
@@ -371,6 +396,28 @@ export default function RegisterForm() {
           onBlur={() => handleBlur("password")}
           isInvalid={!!validationErrors.password}
           errorMessage={validationErrors.password}
+          endContent={
+            <Popover placement="right">
+              <PopoverTrigger>
+                <Button isIconOnly size="sm" color="primary" radius="full">
+                  ?
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent>
+                <div className="px-1 py-2">
+                  <div className="text-small font-bold">
+                    {t("passwordRequirements.title")}
+                  </div>
+                  <ul className="text-tiny pl-4 mt-1 list-disc">
+                    <li>{t("passwordRequirements.length")}</li>
+                    <li>{t("passwordRequirements.letter")}</li>
+                    <li>{t("passwordRequirements.number")}</li>
+                    <li>{t("passwordRequirements.latin")}</li>
+                  </ul>
+                </div>
+              </PopoverContent>
+            </Popover>
+          }
         />
 
         {formData.password && (

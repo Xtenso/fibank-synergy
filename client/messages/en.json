@@ -47,6 +47,13 @@
       "moderate": "Moderate",
       "strong": "Strong",
       "veryStrong": "Very strong"
+    },
+    "passwordRequirements": {
+      "title": "Password Requirements",
+      "length": "Must be between 6 and 24 characters",
+      "letter": "Must contain at least one letter",
+      "number": "Must contain at least one number",
+      "latin": "Must use Latin characters only"
     }
   },
 
@@ -54,6 +61,7 @@
     "fullName": "Full name",
     "uin": "UIN (Personal ID)",
     "uinForeigner": "UIN Foreigner (Optional)",
+    "uniForeignerPopoverMessage": "If you are a foreigner, please enter your UIN.",
     "nameCyrillic": "Name in Cyrillic (Джон Смег)",
     "nameLatin": "Name in Latin (John Smeg)",
     "email": "Email address",
