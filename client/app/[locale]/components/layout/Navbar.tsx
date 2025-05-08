@@ -5,6 +5,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
 import { useAuth } from "../../lib/auth";
 import { Link } from "@/i18n/navigation";
+import { Button } from "@heroui/react";
 import LanguageSwitcher from "./LanguageSwitcher";
 
 export default function Navbar() {
@@ -58,31 +59,37 @@ export default function Navbar() {
                 <span className="text-sm text-gray-700 hidden sm:inline-block">
                   {displayName}
                 </span>
-                <button
-                  onClick={logout}
-                  className="px-3 py-1 cursor-pointer text-sm rounded-md bg-red-50 text-red-700 hover:bg-red-100"
+                <Button
+                  color="danger"
+                  variant="flat"
+                  size="sm"
+                  onPress={logout}
                 >
                   {t("signOut")}
-                </button>
+                </Button>
               </div>
             ) : (
               <>
                 {pathname !== "/auth/login" && (
-                  <Link
+                  <Button
+                    as={Link}
                     href="/auth/login"
-                    className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    color="primary"
+                    size="sm"
                   >
                     {t("login")}
-                  </Link>
+                  </Button>
                 )}
 
                 {pathname !== "/auth/register" && (
-                  <Link
+                  <Button
+                    as={Link}
                     href="/auth/register"
-                    className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    variant="bordered"
+                    size="sm"
                   >
                     {t("register")}
-                  </Link>
+                  </Button>
                 )}
               </>
             )}

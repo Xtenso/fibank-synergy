@@ -196,7 +196,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       title: t("logoutSuccess"),
       description: t("logoutMessage"),
       variant: "solid",
-      color: "primary",
+      color: "success",
     });
 
     router.push("/");
