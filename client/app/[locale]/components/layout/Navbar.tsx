@@ -24,7 +24,7 @@ export default function Navbar() {
           <div className="flex-shrink-0">
             <Link className="flex flex-row items-center" href="/">
               <Image
-                src="/images/logo.png"
+                src="/logo.png"
                 alt="FiBank Synergy Logo"
                 width={40}
                 height={40}
