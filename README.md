@@ -17,7 +17,7 @@
 - starting client side: **cd client > npm run dev**
 - open **http://localhost:3000** (or preferred PORT) in your browser
 
-## Libraries and frameworks being used
+## Libraries and frameworks used
 
 - React, Next.js and Type Script on **frontend**
 - MongoDB, Node.js and Type Script on **backend**
