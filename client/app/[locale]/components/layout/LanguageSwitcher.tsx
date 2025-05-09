@@ -26,12 +26,8 @@ export default function LanguageSwitcher() {
         aria-label="Select language"
         radius="sm"
       >
-        <SelectItem key="en" value="en">
-          EN
-        </SelectItem>
-        <SelectItem key="bg" value="bg">
-          BG
-        </SelectItem>
+        <SelectItem key="en">EN</SelectItem>
+        <SelectItem key="bg">BG</SelectItem>
       </Select>
     </div>
   );
