@@ -32,7 +32,18 @@ export default function RegisterForm() {
     password: "",
     confirmPassword: "",
   });
-  const [passwordStrength, setPasswordStrength] = useState({
+  const [passwordStrength, setPasswordStrength] = useState<{
+    score: number;
+    label: string;
+    color:
+      | "default"
+      | "danger"
+      | "primary"
+      | "secondary"
+      | "success"
+      | "warning"
+      | undefined;
+  }>({
     score: 0,
     label: "",
     color: "default",
@@ -266,7 +277,7 @@ export default function RegisterForm() {
   };
 
   return (
-    <Form className="space-y-4" onSubmit={handleSubmit}>
+    <Form className="space-y-3" onSubmit={handleSubmit}>
       <Input
         label={tUser("uin")}
         labelPlacement="outside"

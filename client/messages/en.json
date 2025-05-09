@@ -62,8 +62,8 @@
     "uin": "UIN (Personal ID)",
     "uinForeigner": "UIN Foreigner (Optional)",
     "uniForeignerPopoverMessage": "If you are a foreigner, please enter your UIN.",
-    "nameCyrillic": "Name in Cyrillic (Джон Смег)",
-    "nameLatin": "Name in Latin (John Smeg)",
+    "nameCyrillic": "Name in Cyrillic",
+    "nameLatin": "Name in Latin",
     "email": "Email address",
     "phoneNumber": "Phone number",
     "address": "Address",
@@ -100,6 +100,7 @@
   },
 
   "home": {
+    "companyName": "FiBank Synergy",
     "title": "Secure Banking Platform",
     "subtitle": "Access your accounts securely and manage your finances with ease.",
     "secureAuthentication": "Secure Authentication",
