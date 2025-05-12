@@ -104,12 +104,21 @@
     "secureAuthentication": "Secure Authentication",
     "secureDescription": "Advanced security features with JWT authentication and password hashing to protect your data.",
     "userFriendly": "User-Friendly Interface",
-    "userFriendlyDescription": "Modern, responsive design with Next.js and Tailwind CSS for a seamless user experience.",
-    "footer": "© 2023 FiBank Synergy. All rights reserved."
+    "userFriendlyDescription": "Modern, responsive design with Next.js and Tailwind CSS for a seamless user experience."
   },
 
   "register": {
     "title": "Registration of a new user",
     "description": "This registration form is only filled in if you do not have a username and password for the Virtual Banking Branch (e-fibank) of FIB. If you already have a username and password, adding access to a new individual or legal entity is done at the bank. If you have forgotten your username and/or password, please visit the bank to receive them."
+  },
+
+  "footer": {
+    "addAccount": "How to add an account",
+    "sso": "Single Sign-On (SSO)",
+    "registration": "Registration process",
+    "signature": "Electronic signature",
+    "fees": "Fees and commissions",
+    "documents": "Documents",
+    "copyright": "© First Investment Bank"
   }
 }

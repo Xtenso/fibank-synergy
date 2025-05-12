@@ -8,6 +8,7 @@ import { routing } from "@/i18n/routing";
 import { HeroUIProvider } from "@heroui/react";
 import { ToastProvider } from "@heroui/toast";
 import Navbar from "./components/layout/Navbar";
+import Footer from "./components/layout/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -48,6 +49,7 @@ export default async function LocaleLayout({
             <AuthProvider>
               <Navbar />
               {children}
+              <Footer />
             </AuthProvider>
           </NextIntlClientProvider>
         </HeroUIProvider>

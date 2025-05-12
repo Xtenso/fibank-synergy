@@ -64,7 +64,6 @@ export default function LoginForm() {
         value={formData.username}
         onValueChange={(value) => handleValueChange("username", value)}
         validate={validateField("username")}
-        autoComplete="username"
       />
 
       <Input
@@ -75,7 +74,6 @@ export default function LoginForm() {
         value={formData.password}
         onValueChange={(value) => handleValueChange("password", value)}
         validate={validateField("password")}
-        autoComplete="current-password"
       />
 
       <div className="flex items-center justify-between">
