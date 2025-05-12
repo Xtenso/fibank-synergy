@@ -9,7 +9,6 @@ export default function AuthLayout({
 }) {
   const { isAuthenticated } = useAuthRedirect();
 
-  // Don't render auth pages if user is already authenticated
   if (isAuthenticated) {
     return null;
   }

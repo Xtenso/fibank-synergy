@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "../../lib/auth";
 import { Form, Button, Input, addToast } from "@heroui/react";
@@ -9,7 +9,8 @@ import { validateUsername, validatePassword } from "../../utils/validation";
 
 export default function LoginForm() {
   const t = useTranslations("auth");
-  const { login, error: authError } = useAuth();
+  const tUser = useTranslations("user");
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -21,24 +22,6 @@ export default function LoginForm() {
   const [validationErrors, setValidationErrors] = useState<
     Record<string, string>
   >({});
-
-  // Map backend errors to translation keys; fallback to loginError
-  useEffect(() => {
-    if (authError) {
-      let errorKey = "loginError";
-
-      if (authError.includes("Invalid credentials")) {
-        errorKey = "invalidCredentials";
-      }
-
-      addToast({
-        title: t("loginFailed"),
-        description: t(errorKey),
-        variant: "solid",
-        color: "danger",
-      });
-    }
-  }, [authError, t]);
 
   const handleValueChange = (field: string, value: string) => {
     setFormData((prev) => ({
@@ -101,7 +84,21 @@ export default function LoginForm() {
     setIsSubmitting(true);
     try {
       await login(formData.username, formData.password);
-    } catch (error) {
+    } catch (error: any) {
+      let errorKey = "loginError";
+      const errorMessage =
+        error?.response?.data?.message || error?.message || "";
+
+      if (errorMessage.includes("Invalid credentials")) {
+        errorKey = "invalidCredentials";
+      }
+
+      addToast({
+        title: t("loginFailed"),
+        description: t(errorKey),
+        variant: "solid",
+        color: "danger",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -110,7 +107,7 @@ export default function LoginForm() {
   return (
     <Form className="space-y-6" onSubmit={handleSubmit}>
       <Input
-        label={t("username")}
+        label={tUser("username")}
         type="text"
         id="username"
         isRequired
@@ -122,7 +119,7 @@ export default function LoginForm() {
       />
 
       <Input
-        label={t("password")}
+        label={tUser("password")}
         type="password"
         id="password"
         isRequired

@@ -20,7 +20,7 @@ import { validateField } from "../../utils/validation";
 export default function RegisterForm() {
   const t = useTranslations("auth");
   const tUser = useTranslations("user");
-  const { register, error: authError } = useAuth();
+  const { register } = useAuth();
   const [formData, setFormData] = useState({
     uin: "",
     uinForeigner: "",
@@ -56,26 +56,6 @@ export default function RegisterForm() {
   const [validationErrors, setValidationErrors] = useState<
     Record<string, string>
   >({});
-
-  // Map backend errors to translation keys; fallback to registerError
-  useEffect(() => {
-    if (authError) {
-      let errorKey = "registerError";
-
-      if (authError.includes("email already exists")) {
-        errorKey = "emailExists";
-      } else if (authError.includes("Username already taken")) {
-        errorKey = "usernameExists";
-      }
-
-      addToast({
-        title: t("registerFailed"),
-        description: t(errorKey),
-        variant: "solid",
-        color: "danger",
-      });
-    }
-  }, [authError, t]);
 
   // Calculate password strength whenever password changes
   useEffect(() => {
@@ -148,7 +128,23 @@ export default function RegisterForm() {
     try {
       const { confirmPassword, ...registerData } = formData;
       await register(registerData);
-    } catch (error) {
+    } catch (error: any) {
+      let errorKey = "registerError";
+      const errorMessage =
+        error?.response?.data?.message || error?.message || "";
+
+      if (errorMessage.includes("email already exists")) {
+        errorKey = "emailExists";
+      } else if (errorMessage.includes("Username already taken")) {
+        errorKey = "usernameExists";
+      }
+
+      addToast({
+        title: t("registerFailed"),
+        description: t(errorKey),
+        variant: "solid",
+        color: "danger",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -255,7 +251,7 @@ export default function RegisterForm() {
       />
 
       <Input
-        label={t("username")}
+        label={tUser("username")}
         id="username"
         isRequired
         value={formData.username}
@@ -267,7 +263,7 @@ export default function RegisterForm() {
 
       <div className="space-y-2 w-full">
         <Input
-          label={t("password")}
+          label={tUser("password")}
           type="password"
           id="password"
           isRequired
@@ -319,7 +315,7 @@ export default function RegisterForm() {
       </div>
 
       <Input
-        label={t("confirmPassword")}
+        label={tUser("confirmPassword")}
         type="password"
         id="confirmPassword"
         isRequired

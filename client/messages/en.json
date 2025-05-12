@@ -3,9 +3,6 @@
     "login": "Sign in",
     "register": "Sign up",
     "signOut": "Sign out",
-    "username": "Username",
-    "password": "Password",
-    "confirmPassword": "Confirm password",
     "loginTitle": "Sign in to your account",
     "noAccount": "Don't have an account? Sign up",
     "alreadyHaveAccount": "Already have an account? Sign in",
@@ -26,6 +23,7 @@
     "registerFailed": "Registration Failed",
     "emailExists": "A user with this email already exists",
     "usernameExists": "This username is already taken",
+    "unexpectedError": "An unexpected error occurred. Please try again later.",
     "errors": {
       "usernameRequired": "Username is required",
       "passwordRequired": "Password is required",

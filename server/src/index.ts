@@ -15,12 +15,27 @@ const app: Application = express();
 
 // Middleware
 app.use(express.json());
-app.use(
-  cors({
-    origin: process.env.CLIENT_URL,
-    credentials: true,
-  })
-);
+
+const isDevelopment = process.env.NODE_ENV !== "production";
+
+if (isDevelopment) {
+  app.use(
+    cors({
+      origin: ["http://localhost:3000", "http://127.0.0.1:3000"],
+      credentials: true,
+      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+    })
+  );
+  console.log("Running in development mode with relaxed CORS");
+} else {
+  app.use(
+    cors({
+      origin: process.env.CLIENT_URL,
+      credentials: true,
+    })
+  );
+}
 
 // Routes
 initializeRoutes(app);
