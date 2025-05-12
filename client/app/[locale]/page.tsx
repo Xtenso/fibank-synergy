@@ -1,5 +1,4 @@
 import { useTranslations } from "next-intl";
-import Navbar from "./components/layout/Navbar";
 import SecurityIcon from "./components/icons/SecurityIcon";
 import InterfaceIcon from "./components/icons/InterfaceIcon";
 
@@ -8,8 +7,6 @@ export default function Home() {
 
   return (
     <div className="bg-white min-h-screen">
-      <Navbar />
-
       <main>
         <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
           <div className="lg:text-center">

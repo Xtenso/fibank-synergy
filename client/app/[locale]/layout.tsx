@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { HeroUIProvider } from "@heroui/react";
 import { ToastProvider } from "@heroui/toast";
+import Navbar from "./components/layout/Navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,7 +27,7 @@ export default async function LocaleLayout({
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }) {
-  const { locale } = await params; 
+  const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
@@ -44,7 +45,10 @@ export default async function LocaleLayout({
         <HeroUIProvider>
           <ToastProvider />
           <NextIntlClientProvider locale={locale} messages={messages}>
-            <AuthProvider>{children}</AuthProvider>
+            <AuthProvider>
+              <Navbar />
+              {children}
+            </AuthProvider>
           </NextIntlClientProvider>
         </HeroUIProvider>
       </body>
