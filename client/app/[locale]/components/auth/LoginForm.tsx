@@ -52,7 +52,7 @@ export default function LoginForm() {
       case "username":
         return validateUsername(formData.username, t);
       case "password":
-        return validatePassword(formData.password, t, false);
+        return validatePassword(formData.password, t);
       default:
         return null;
     }
@@ -111,7 +111,6 @@ export default function LoginForm() {
     <Form className="space-y-6" onSubmit={handleSubmit}>
       <Input
         label={t("username")}
-        labelPlacement="outside"
         type="text"
         id="username"
         isRequired
@@ -124,7 +123,6 @@ export default function LoginForm() {
 
       <Input
         label={t("password")}
-        labelPlacement="outside"
         type="password"
         id="password"
         isRequired

@@ -42,7 +42,7 @@ export default async function LocaleLayout({
   return (
     <html lang={locale}>
       <body className={inter.className}>
-        <HeroUIProvider>
+        <HeroUIProvider labelPlacement="outside">
           <ToastProvider />
           <NextIntlClientProvider locale={locale} messages={messages}>
             <AuthProvider>

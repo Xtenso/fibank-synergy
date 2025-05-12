@@ -101,7 +101,7 @@ export default function RegisterForm() {
   };
 
   const validateFormField = (field: string): string | null => {
-    return validateField(field, formData, t, tUser, true);
+    return validateField(field, formData, t, tUser);
   };
 
   const handleBlur = (field: string) => {
@@ -158,7 +158,6 @@ export default function RegisterForm() {
     <Form className="space-y-3" onSubmit={handleSubmit}>
       <Input
         label={tUser("uin")}
-        labelPlacement="outside"
         id="uin"
         isRequired
         value={formData.uin}
@@ -170,7 +169,6 @@ export default function RegisterForm() {
 
       <Input
         label={tUser("uinForeigner")}
-        labelPlacement="outside"
         id="uinForeigner"
         value={formData.uinForeigner}
         onValueChange={(value) => handleValueChange("uinForeigner", value)}
@@ -198,7 +196,6 @@ export default function RegisterForm() {
       <div className="flex flex-col sm:flex-row sm:gap-4 w-full">
         <Input
           label={tUser("nameCyrillic")}
-          labelPlacement="outside"
           id="nameCyrillic"
           isRequired
           value={formData.nameCyrillic}
@@ -210,7 +207,6 @@ export default function RegisterForm() {
 
         <Input
           label={tUser("nameLatin")}
-          labelPlacement="outside"
           id="nameLatin"
           isRequired
           value={formData.nameLatin}
@@ -224,7 +220,6 @@ export default function RegisterForm() {
       <div className="flex flex-col sm:flex-row sm:gap-4 w-full">
         <Input
           label={tUser("email")}
-          labelPlacement="outside"
           type="email"
           id="email"
           isRequired
@@ -237,7 +232,6 @@ export default function RegisterForm() {
 
         <Input
           label={tUser("phoneNumber")}
-          labelPlacement="outside"
           type="tel"
           id="phoneNumber"
           isRequired
@@ -251,7 +245,6 @@ export default function RegisterForm() {
 
       <Input
         label={tUser("address")}
-        labelPlacement="outside"
         id="address"
         isRequired
         value={formData.address}
@@ -263,7 +256,6 @@ export default function RegisterForm() {
 
       <Input
         label={t("username")}
-        labelPlacement="outside"
         id="username"
         isRequired
         value={formData.username}
@@ -276,7 +268,6 @@ export default function RegisterForm() {
       <div className="space-y-2 w-full">
         <Input
           label={t("password")}
-          labelPlacement="outside"
           type="password"
           id="password"
           isRequired
@@ -329,7 +320,6 @@ export default function RegisterForm() {
 
       <Input
         label={t("confirmPassword")}
-        labelPlacement="outside"
         type="password"
         id="confirmPassword"
         isRequired

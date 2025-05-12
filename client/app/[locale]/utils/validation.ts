@@ -122,31 +122,25 @@ export const validateEmail = (
   return null;
 };
 
-// Validate password (can be used in both login and register forms)
+// Validate password (unified for all forms)
 export const validatePassword = (
   password: string,
-  translate: GetTranslationFn,
-  isRegisterForm: boolean = false
+  translate: GetTranslationFn
 ): ValidationResult => {
   if (!password) {
     return translate("errors.passwordRequired");
   } else if (password.length < 6) {
     return translate("errors.passwordLength");
-  }
-
-  // Additional validations for registration form
-  if (isRegisterForm) {
-    if (password.length > 24) {
-      return translate("errors.passwordMaxLength");
-    } else if (!/[a-zA-Z]/.test(password)) {
-      return translate("errors.passwordLetter");
-    } else if (!/[0-9]/.test(password)) {
-      return translate("errors.passwordNumber");
-    } else if (
-      !/^[a-zA-Z0-9!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+$/.test(password)
-    ) {
-      return translate("errors.passwordFormat");
-    }
+  } else if (password.length > 24) {
+    return translate("errors.passwordMaxLength");
+  } else if (!/[a-zA-Z]/.test(password)) {
+    return translate("errors.passwordLetter");
+  } else if (!/[0-9]/.test(password)) {
+    return translate("errors.passwordNumber");
+  } else if (
+    !/^[a-zA-Z0-9!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+$/.test(password)
+  ) {
+    return translate("errors.passwordFormat");
   }
 
   return null;
@@ -171,8 +165,7 @@ export const validateField = (
   field: string,
   formData: Record<string, string>,
   translate: GetTranslationFn,
-  translateUser: GetTranslationFn,
-  isRegisterForm: boolean = false
+  translateUser: GetTranslationFn
 ): ValidationResult => {
   switch (field) {
     case "uin":
@@ -190,7 +183,7 @@ export const validateField = (
     case "email":
       return validateEmail(formData.email, translateUser);
     case "password":
-      return validatePassword(formData.password, translate, isRegisterForm);
+      return validatePassword(formData.password, translate);
     case "confirmPassword":
       return validateConfirmPassword(
         formData.confirmPassword,
