@@ -15,7 +15,7 @@ import {
 } from "@heroui/react";
 import { Link } from "@/i18n/navigation";
 import { calculatePasswordStrength } from "../../utils/passwordStrength";
-import { validateField } from "../../utils/validation";
+import { createValidator } from "../../utils/validation";
 
 export default function RegisterForm() {
   const t = useTranslations("auth");
@@ -50,14 +50,7 @@ export default function RegisterForm() {
     color: "default",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>(
-    {}
-  );
-  const [validationErrors, setValidationErrors] = useState<
-    Record<string, string>
-  >({});
 
-  // Calculate password strength whenever password changes
   useEffect(() => {
     if (formData.password) {
       const strength = calculatePasswordStrength(formData.password, (key) =>
@@ -80,49 +73,12 @@ export default function RegisterForm() {
     }));
   };
 
-  const validateFormField = (field: string): string | null => {
-    return validateField(field, formData, t, tUser);
-  };
-
-  const handleBlur = (field: string) => {
-    setTouchedFields((prev) => ({
-      ...prev,
-      [field]: true,
-    }));
-
-    const error = validateFormField(field);
-
-    setValidationErrors((prev) => {
-      if (error) {
-        return {
-          ...prev,
-          [field]: error,
-        };
-      } else {
-        const { [field]: _, ...rest } = prev;
-        return rest;
-      }
-    });
-  };
-
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-
-    Object.keys(formData).forEach((field) => {
-      const error = validateFormField(field);
-      if (error) {
-        newErrors[field] = error;
-      }
-    });
-
-    setValidationErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const validateField = (fieldName: string) => {
+    return createValidator(fieldName, formData, t, tUser);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    if (!validateForm()) return;
 
     setIsSubmitting(true);
     try {
@@ -158,9 +114,7 @@ export default function RegisterForm() {
         isRequired
         value={formData.uin}
         onValueChange={(value) => handleValueChange("uin", value)}
-        onBlur={() => handleBlur("uin")}
-        isInvalid={!!validationErrors.uin}
-        errorMessage={validationErrors.uin}
+        validate={validateField("uin")}
       />
 
       <Input
@@ -168,9 +122,7 @@ export default function RegisterForm() {
         id="uinForeigner"
         value={formData.uinForeigner}
         onValueChange={(value) => handleValueChange("uinForeigner", value)}
-        onBlur={() => handleBlur("uinForeigner")}
-        isInvalid={!!validationErrors.uinForeigner}
-        errorMessage={validationErrors.uinForeigner}
+        validate={validateField("uinForeigner")}
         endContent={
           <Popover placement="right">
             <PopoverTrigger>
@@ -196,9 +148,7 @@ export default function RegisterForm() {
           isRequired
           value={formData.nameCyrillic}
           onValueChange={(value) => handleValueChange("nameCyrillic", value)}
-          onBlur={() => handleBlur("nameCyrillic")}
-          isInvalid={!!validationErrors.nameCyrillic}
-          errorMessage={validationErrors.nameCyrillic}
+          validate={validateField("nameCyrillic")}
         />
 
         <Input
@@ -207,9 +157,7 @@ export default function RegisterForm() {
           isRequired
           value={formData.nameLatin}
           onValueChange={(value) => handleValueChange("nameLatin", value)}
-          onBlur={() => handleBlur("nameLatin")}
-          isInvalid={!!validationErrors.nameLatin}
-          errorMessage={validationErrors.nameLatin}
+          validate={validateField("nameLatin")}
         />
       </div>
 
@@ -221,9 +169,7 @@ export default function RegisterForm() {
           isRequired
           value={formData.email}
           onValueChange={(value) => handleValueChange("email", value)}
-          onBlur={() => handleBlur("email")}
-          isInvalid={!!validationErrors.email}
-          errorMessage={validationErrors.email}
+          validate={validateField("email")}
         />
 
         <Input
@@ -233,9 +179,7 @@ export default function RegisterForm() {
           isRequired
           value={formData.phoneNumber}
           onValueChange={(value) => handleValueChange("phoneNumber", value)}
-          onBlur={() => handleBlur("phoneNumber")}
-          isInvalid={!!validationErrors.phoneNumber}
-          errorMessage={validationErrors.phoneNumber}
+          validate={validateField("phoneNumber")}
         />
       </div>
 
@@ -245,9 +189,7 @@ export default function RegisterForm() {
         isRequired
         value={formData.address}
         onValueChange={(value) => handleValueChange("address", value)}
-        onBlur={() => handleBlur("address")}
-        isInvalid={!!validationErrors.address}
-        errorMessage={validationErrors.address}
+        validate={validateField("address")}
       />
 
       <Input
@@ -256,9 +198,7 @@ export default function RegisterForm() {
         isRequired
         value={formData.username}
         onValueChange={(value) => handleValueChange("username", value)}
-        onBlur={() => handleBlur("username")}
-        isInvalid={!!validationErrors.username}
-        errorMessage={validationErrors.username}
+        validate={validateField("username")}
       />
 
       <div className="space-y-2 w-full">
@@ -269,9 +209,7 @@ export default function RegisterForm() {
           isRequired
           value={formData.password}
           onValueChange={(value) => handleValueChange("password", value)}
-          onBlur={() => handleBlur("password")}
-          isInvalid={!!validationErrors.password}
-          errorMessage={validationErrors.password}
+          validate={validateField("password")}
           endContent={
             <Popover placement="right">
               <PopoverTrigger>
@@ -321,9 +259,7 @@ export default function RegisterForm() {
         isRequired
         value={formData.confirmPassword}
         onValueChange={(value) => handleValueChange("confirmPassword", value)}
-        onBlur={() => handleBlur("confirmPassword")}
-        isInvalid={!!validationErrors.confirmPassword}
-        errorMessage={validationErrors.confirmPassword}
+        validate={validateField("confirmPassword")}
       />
 
       <div className="flex items-center justify-between">

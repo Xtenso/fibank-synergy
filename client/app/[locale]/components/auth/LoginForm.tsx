@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { useAuth } from "../../lib/auth";
 import { Form, Button, Input, addToast } from "@heroui/react";
 import { Link } from "@/i18n/navigation";
-import { validateUsername, validatePassword } from "../../utils/validation";
+import { createValidator } from "../../utils/validation";
 
 export default function LoginForm() {
   const t = useTranslations("auth");
@@ -16,12 +16,6 @@ export default function LoginForm() {
     password: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>(
-    {}
-  );
-  const [validationErrors, setValidationErrors] = useState<
-    Record<string, string>
-  >({});
 
   const handleValueChange = (field: string, value: string) => {
     setFormData((prev) => ({
@@ -30,56 +24,12 @@ export default function LoginForm() {
     }));
   };
 
-  const validateField = (field: string): string | null => {
-    switch (field) {
-      case "username":
-        return validateUsername(formData.username, t);
-      case "password":
-        return validatePassword(formData.password, t);
-      default:
-        return null;
-    }
-  };
-
-  const handleBlur = (field: string) => {
-    setTouchedFields((prev) => ({
-      ...prev,
-      [field]: true,
-    }));
-
-    const error = validateField(field);
-
-    setValidationErrors((prev) => {
-      if (error) {
-        return {
-          ...prev,
-          [field]: error,
-        };
-      } else {
-        const { [field]: _, ...rest } = prev;
-        return rest;
-      }
-    });
-  };
-
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-
-    Object.keys(formData).forEach((field) => {
-      const error = validateField(field);
-      if (error) {
-        newErrors[field] = error;
-      }
-    });
-
-    setValidationErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const validateField = (fieldName: string) => {
+    return createValidator(fieldName, formData, t, tUser);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    if (!validateForm()) return;
 
     setIsSubmitting(true);
     try {
@@ -113,9 +63,8 @@ export default function LoginForm() {
         isRequired
         value={formData.username}
         onValueChange={(value) => handleValueChange("username", value)}
-        onBlur={() => handleBlur("username")}
-        isInvalid={!!validationErrors.username}
-        errorMessage={validationErrors.username}
+        validate={validateField("username")}
+        autoComplete="username"
       />
 
       <Input
@@ -125,9 +74,8 @@ export default function LoginForm() {
         isRequired
         value={formData.password}
         onValueChange={(value) => handleValueChange("password", value)}
-        onBlur={() => handleBlur("password")}
-        isInvalid={!!validationErrors.password}
-        errorMessage={validationErrors.password}
+        validate={validateField("password")}
+        autoComplete="current-password"
       />
 
       <div className="flex items-center justify-between">

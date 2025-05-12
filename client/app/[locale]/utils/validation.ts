@@ -1,4 +1,4 @@
-type ValidationResult = string | null;
+type ValidationResult = string | true;
 type GetTranslationFn = (key: string) => string;
 
 export interface FormField {
@@ -7,7 +7,27 @@ export interface FormField {
   touched?: boolean;
 }
 
-// Validate UIN field
+export function createValidator(
+  field: string,
+  formData: Record<string, string>,
+  translate: GetTranslationFn,
+  translateUser?: GetTranslationFn
+) {
+  return (value: string) => {
+    if (field === "confirmPassword") {
+      return validateConfirmPassword(value, formData.password, translate);
+    }
+
+    const result = validateField(
+      field,
+      { ...formData, [field]: value },
+      translate,
+      translateUser || translate
+    );
+    return result;
+  };
+}
+
 export const validateUin = (
   uin: string,
   translate: GetTranslationFn
@@ -19,10 +39,9 @@ export const validateUin = (
   } else if (!/^[0-9]+$/.test(uin)) {
     return translate("errors.uinFormat");
   }
-  return null;
+  return true;
 };
 
-// Validate Cyrillic name
 export const validateNameCyrillic = (
   name: string,
   translate: GetTranslationFn
@@ -41,10 +60,9 @@ export const validateNameCyrillic = (
   ) {
     return translate("errors.namePartLength");
   }
-  return null;
+  return true;
 };
 
-// Validate Latin name
 export const validateNameLatin = (
   name: string,
   translate: GetTranslationFn
@@ -63,10 +81,9 @@ export const validateNameLatin = (
   ) {
     return translate("errors.namePartLength");
   }
-  return null;
+  return true;
 };
 
-// Validate phone number
 export const validatePhoneNumber = (
   phone: string,
   translate: GetTranslationFn
@@ -78,10 +95,9 @@ export const validatePhoneNumber = (
   } else if (!/^\+?[0-9\s-]+$/.test(phone)) {
     return translate("errors.phoneFormat");
   }
-  return null;
+  return true;
 };
 
-// Validate address
 export const validateAddress = (
   address: string,
   translate: GetTranslationFn
@@ -91,10 +107,9 @@ export const validateAddress = (
   } else if (address.length < 10) {
     return translate("errors.addressLength");
   }
-  return null;
+  return true;
 };
 
-// Validate username
 export const validateUsername = (
   username: string,
   translate: GetTranslationFn
@@ -106,10 +121,9 @@ export const validateUsername = (
   } else if (!/^[a-zA-Z_-]+$/.test(username)) {
     return translate("errors.usernameFormat");
   }
-  return null;
+  return true;
 };
 
-// Validate email
 export const validateEmail = (
   email: string,
   translate: GetTranslationFn
@@ -119,10 +133,9 @@ export const validateEmail = (
   } else if (!/^\S+@\S+\.\S+$/.test(email)) {
     return translate("errors.emailInvalid");
   }
-  return null;
+  return true;
 };
 
-// Validate password (unified for all forms)
 export const validatePassword = (
   password: string,
   translate: GetTranslationFn
@@ -142,11 +155,9 @@ export const validatePassword = (
   ) {
     return translate("errors.passwordFormat");
   }
-
-  return null;
+  return true;
 };
 
-// Validate confirm password
 export const validateConfirmPassword = (
   confirmPassword: string,
   password: string,
@@ -157,10 +168,9 @@ export const validateConfirmPassword = (
   } else if (confirmPassword !== password) {
     return translate("errors.passwordsDoNotMatch");
   }
-  return null;
+  return true;
 };
 
-// General field validation function
 export const validateField = (
   field: string,
   formData: Record<string, string>,
@@ -191,6 +201,6 @@ export const validateField = (
         translate
       );
     default:
-      return null;
+      return true;
   }
 };
