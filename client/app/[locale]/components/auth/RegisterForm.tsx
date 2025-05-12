@@ -15,6 +15,7 @@ import {
 } from "@heroui/react";
 import { Link } from "@/i18n/navigation";
 import { calculatePasswordStrength } from "../../utils/passwordStrength";
+import { validateField } from "../../utils/validation";
 
 export default function RegisterForm() {
   const t = useTranslations("auth");
@@ -99,131 +100,8 @@ export default function RegisterForm() {
     }));
   };
 
-  const validateField = (field: string): string | null => {
-    switch (field) {
-      case "uin":
-        if (!formData.uin) {
-          return tUser("errors.uinRequired");
-        } else if (formData.uin.length !== 10) {
-          return tUser("errors.uinLength");
-        } else if (!/^[0-9]+$/.test(formData.uin)) {
-          return tUser("errors.uinFormat");
-        }
-        break;
-
-      case "nameCyrillic":
-        if (!formData.nameCyrillic) {
-          return tUser("errors.nameCyrillicRequired");
-        } else if (!/^[\u0400-\u04FF\s-]+$/.test(formData.nameCyrillic)) {
-          return tUser("errors.nameCyrillicFormat");
-        } else if (formData.nameCyrillic.trim().split(/\s+/).length < 2) {
-          return tUser("errors.nameFullRequired");
-        } else if (
-          formData.nameCyrillic
-            .trim()
-            .split(/\s+/)
-            .some((part) => part.length < 3)
-        ) {
-          return tUser("errors.namePartLength");
-        }
-        break;
-
-      case "nameLatin":
-        if (!formData.nameLatin) {
-          return tUser("errors.nameLatinRequired");
-        } else if (!/^[A-Za-z\s-]+$/.test(formData.nameLatin)) {
-          return tUser("errors.nameLatinFormat");
-        } else if (formData.nameLatin.trim().split(/\s+/).length < 2) {
-          return tUser("errors.nameFullRequired");
-        } else if (
-          formData.nameLatin
-            .trim()
-            .split(/\s+/)
-            .some((part) => part.length < 3)
-        ) {
-          return tUser("errors.namePartLength");
-        }
-        break;
-
-      case "phoneNumber":
-        if (!formData.phoneNumber) {
-          return tUser("errors.phoneRequired");
-        } else if (formData.phoneNumber.length < 10) {
-          return tUser("errors.phoneLength");
-        } else if (!/^\+?[0-9\s-]+$/.test(formData.phoneNumber)) {
-          return tUser("errors.phoneFormat");
-        }
-        break;
-
-      case "address":
-        if (!formData.address) {
-          return tUser("errors.addressRequired");
-        } else if (formData.address.length < 10) {
-          return tUser("errors.addressLength");
-        }
-        break;
-
-      case "username":
-        if (!formData.username) {
-          return t("errors.usernameRequired");
-        } else if (formData.username.length < 5) {
-          return t("errors.usernameMinLength");
-        } else if (!/^[a-zA-Z_-]+$/.test(formData.username)) {
-          return t("errors.usernameFormat");
-        }
-        break;
-
-      case "email":
-        if (!formData.email) {
-          return tUser("errors.emailRequired");
-        } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
-          return tUser("errors.emailInvalid");
-        }
-        break;
-
-      case "password":
-        if (!formData.password) {
-          return t("errors.passwordRequired");
-        } else if (formData.password.length < 6) {
-          return t("errors.passwordLength");
-        } else if (formData.password.length > 24) {
-          return t("errors.passwordMaxLength");
-        } else if (!/[a-zA-Z]/.test(formData.password)) {
-          return t("errors.passwordLetter");
-        } else if (!/[0-9]/.test(formData.password)) {
-          return t("errors.passwordNumber");
-        } else if (
-          !/^[a-zA-Z0-9!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+$/.test(
-            formData.password
-          )
-        ) {
-          return t("errors.passwordFormat");
-        }
-        if (touchedFields.confirmPassword && formData.confirmPassword) {
-          const confirmError = validateField("confirmPassword");
-          if (confirmError) {
-            setValidationErrors((prev) => ({
-              ...prev,
-              confirmPassword: confirmError,
-            }));
-          } else {
-            setValidationErrors((prev) => {
-              const { confirmPassword, ...rest } = prev;
-              return rest;
-            });
-          }
-        }
-        break;
-
-      case "confirmPassword":
-        if (!formData.confirmPassword) {
-          return t("errors.confirmPasswordRequired");
-        } else if (formData.confirmPassword !== formData.password) {
-          return t("errors.passwordsDoNotMatch");
-        }
-        break;
-    }
-    return null;
+  const validateFormField = (field: string): string | null => {
+    return validateField(field, formData, t, tUser, true);
   };
 
   const handleBlur = (field: string) => {
@@ -232,7 +110,7 @@ export default function RegisterForm() {
       [field]: true,
     }));
 
-    const error = validateField(field);
+    const error = validateFormField(field);
 
     setValidationErrors((prev) => {
       if (error) {
@@ -251,7 +129,7 @@ export default function RegisterForm() {
     const newErrors: Record<string, string> = {};
 
     Object.keys(formData).forEach((field) => {
-      const error = validateField(field);
+      const error = validateFormField(field);
       if (error) {
         newErrors[field] = error;
       }

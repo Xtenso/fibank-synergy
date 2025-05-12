@@ -57,6 +57,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       user: {
         id: user._id,
         uin: user.uin,
+        nameCyrillic: user.nameCyrillic,
         nameLatin: user.nameLatin,
         email: user.email,
         username: user.username,
@@ -106,6 +107,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       user: {
         id: user._id,
         uin: user.uin,
+        nameCyrillic: user.nameCyrillic,
         nameLatin: user.nameLatin,
         email: user.email,
         username: user.username,

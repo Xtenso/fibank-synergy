@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useAuth } from "../../lib/auth";
 import { Form, Button, Input, addToast } from "@heroui/react";
 import { Link } from "@/i18n/navigation";
+import { validateUsername, validatePassword } from "../../utils/validation";
 
 export default function LoginForm() {
   const t = useTranslations("auth");
@@ -49,19 +50,12 @@ export default function LoginForm() {
   const validateField = (field: string): string | null => {
     switch (field) {
       case "username":
-        if (!formData.username) {
-          return t("errors.usernameRequired");
-        }
-        break;
+        return validateUsername(formData.username, t);
       case "password":
-        if (!formData.password) {
-          return t("errors.passwordRequired");
-        } else if (formData.password.length < 6) {
-          return t("errors.passwordLength");
-        }
-        break;
+        return validatePassword(formData.password, t, false);
+      default:
+        return null;
     }
-    return null;
   };
 
   const handleBlur = (field: string) => {
