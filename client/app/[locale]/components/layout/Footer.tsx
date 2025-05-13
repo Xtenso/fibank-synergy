@@ -35,9 +35,7 @@ export default function Footer() {
           ))}
         </div>
         <div className="text-center mt-4 text-xs text-gray-500">
-          <span className="inline-block">
-            &#169; {t("copyright")} 2009-2025
-          </span>
+          <span className="inline-block">{t("copyright")} 2009-2025</span>
         </div>
       </div>
     </footer>

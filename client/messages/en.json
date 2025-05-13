@@ -129,6 +129,26 @@
     "help": "Help",
     "messages": "Messages",
     "notifications": "Notifications",
-    "settings": "Settings"
+    "settings": "Settings",
+    "home": "Home",
+    "reports": "Reports",
+    "payments": "Payments",
+    "statements": "Statements",
+    "accounts": "Accounts",
+    "deposits": "Deposits",
+    "cards": "Cards",
+    "signTransfers": "Transfers for Signing",
+    "documents": "Ordered Documents",
+    "services": "Services",
+    "utilities": "Utilities",
+    "declarations": "Declarations",
+    "fibankInfo": "Fibank Information",
+    "branches": "Branches",
+    "atms": "ATMs",
+    "exchangeRates": "Exchange Rates",
+    "news": "News",
+    "promotions": "Promotions",
+    "additional": "Additional",
+    "transfer": "Transfer"
   }
 }

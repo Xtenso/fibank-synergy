@@ -5,8 +5,9 @@ import { useTranslations, useLocale } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
 import { useAuth } from "../../lib/auth";
 import { Link } from "@/i18n/navigation";
-import { Button } from "@heroui/react";
+import { Button, Avatar } from "@heroui/react";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { getInitials } from "../../utils/getInitials";
 
 export default function Navbar() {
   const locale = useLocale();
@@ -16,7 +17,6 @@ export default function Navbar() {
   const tNav = useTranslations("navigation");
 
   const displayName = locale === "bg" ? user?.nameCyrillic : user?.nameLatin;
-
   const logoDestination = isAuthenticated ? "/dashboard" : "/";
 
   return (
@@ -31,6 +31,7 @@ export default function Navbar() {
                 width={167}
                 height={40}
                 className="scale-[0.9]"
+                priority
               />
             </Link>
           </div>
@@ -94,9 +95,13 @@ export default function Navbar() {
 
             {isAuthenticated ? (
               <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-700 hidden sm:inline-block">
-                  {displayName}
-                </span>
+                <Avatar
+                  color="primary"
+                  name={getInitials(displayName)}
+                  size="sm"
+                  className="hidden sm:flex"
+                  // src={user?.profilePhotoUrl}
+                />
                 <Button
                   color="danger"
                   variant="flat"

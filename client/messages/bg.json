@@ -129,6 +129,26 @@
     "help": "Помощ",
     "messages": "Съобщения",
     "notifications": "Известия",
-    "settings": "Настройки"
+    "settings": "Настройки",
+    "home": "Начало",
+    "reports": "Справки",
+    "payments": "Плащания",
+    "statements": "Извлечения",
+    "accounts": "Сметки",
+    "deposits": "Депозити",
+    "cards": "Карти",
+    "signTransfers": "Преводи за подпис",
+    "documents": "Наредени документи",
+    "services": "Услуги",
+    "utilities": "Комунални услуги",
+    "declarations": "Декларации",
+    "fibankInfo": "Информация за Fibank",
+    "branches": "Клонове",
+    "atms": "Банкомати",
+    "exchangeRates": "Валутни курсове",
+    "news": "Новини",
+    "promotions": "Промоции",
+    "additional": "Допълнително",
+    "transfer": "Превод"
   }
 }

@@ -1,10 +1,10 @@
 "use client";
 
 import { useRequireAuth } from "../lib/auth";
-import { Fragment } from "react";
 import { Spinner } from "@heroui/react";
+import SideNav from "../components/dashboard/SideNav";
 
-export default function ProtectedLayout({
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -20,10 +20,14 @@ export default function ProtectedLayout({
   }
 
   return (
-    <Fragment>
-      <div className="min-h-screen bg-gray-100">
+    <div className="flex p-4 bg-gray-100">
+      <div className="w-64 mr-4 hidden md:block">
+        <SideNav />
+      </div>
+
+      <div className="flex-1 overflow-auto">
         <main>{children}</main>
       </div>
-    </Fragment>
+    </div>
   );
 }
