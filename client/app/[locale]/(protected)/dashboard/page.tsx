@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useAuth } from "../lib/auth";
+import { useAuth } from "@/app/[locale]/lib/auth";
 
 export default function Dashboard() {
   const { user } = useAuth();

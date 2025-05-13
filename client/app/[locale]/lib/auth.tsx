@@ -75,7 +75,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const t = useTranslations("auth");
 
-  // Reset justLoggedIn after a delay
+  // Auth cache duration (30 minutes)
+  const AUTH_CACHE_DURATION = 30 * 60 * 1000;
+
   useEffect(() => {
     if (justLoggedIn) {
       const timer = setTimeout(() => {
@@ -85,28 +87,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [justLoggedIn]);
 
-  // Check if user is authenticated on load
   useEffect(() => {
     const checkAuth = async () => {
       try {
         const storedUser = localStorage.getItem(USER_KEY);
         const token = localStorage.getItem(TOKEN_KEY);
+        const lastVerifiedAt = localStorage.getItem("auth_last_verified");
+        const currentTime = Date.now();
 
         if (storedUser && token) {
           setUser(JSON.parse(storedUser));
 
-          try {
-            const response = await api.get("/users/me");
-            const userData = response.data.user;
+          const shouldVerify =
+            !lastVerifiedAt ||
+            currentTime - parseInt(lastVerifiedAt) > AUTH_CACHE_DURATION;
 
-            const storedUserData = extractStoredUserData(userData);
+          if (shouldVerify) {
+            try {
+              const response = await api.get("/users/me");
+              const userData = response.data.user;
+              const storedUserData = extractStoredUserData(userData);
 
-            setUser(userData);
-            localStorage.setItem(USER_KEY, JSON.stringify(storedUserData));
-          } catch (err) {
-            localStorage.removeItem(TOKEN_KEY);
-            localStorage.removeItem(USER_KEY);
-            setUser(null);
+              setUser(userData);
+              localStorage.setItem(USER_KEY, JSON.stringify(storedUserData));
+
+              localStorage.setItem(
+                "auth_last_verified",
+                currentTime.toString()
+              );
+            } catch (err) {
+              localStorage.removeItem(TOKEN_KEY);
+              localStorage.removeItem(USER_KEY);
+              localStorage.removeItem("auth_last_verified");
+              setUser(null);
+            }
           }
         } else {
           setUser(null);
@@ -114,6 +128,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } catch (error) {
         localStorage.removeItem(TOKEN_KEY);
         localStorage.removeItem(USER_KEY);
+        localStorage.removeItem("auth_last_verified");
         setUser(null);
       } finally {
         setIsLoading(false);
@@ -138,6 +153,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       setUser(userData);
       setJustLoggedIn(true);
+
+      localStorage.setItem("auth_last_verified", Date.now().toString());
 
       addToast({
         title: t("loginSuccess"),
@@ -171,6 +188,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(responseUserData);
       setJustLoggedIn(true);
 
+      localStorage.setItem("auth_last_verified", Date.now().toString());
+
       addToast({
         title: t("registerSuccess"),
         description: t("accountCreated"),
@@ -198,6 +217,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }, 3000);
 
     setUser(null);
+
+    localStorage.removeItem("auth_last_verified");
 
     addToast({
       title: t("logoutSuccess"),

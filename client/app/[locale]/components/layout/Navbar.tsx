@@ -13,45 +13,83 @@ export default function Navbar() {
   const pathname = usePathname();
   const { user, isAuthenticated, logout } = useAuth();
   const t = useTranslations("auth");
-  const tDash = useTranslations("dashboard");
+  const tNav = useTranslations("navigation");
 
   const displayName = locale === "bg" ? user?.nameCyrillic : user?.nameLatin;
+
+  const logoDestination = isAuthenticated ? "/dashboard" : "/";
 
   return (
     <header className="bg-white shadow">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           <div className="flex-shrink-0">
-            <Link className="flex flex-row items-center" href="/">
+            <Link className="flex flex-row items-center" href={logoDestination}>
               <Image
                 src="/logo.png"
                 alt="FiBank Synergy Logo"
-                width={40}
+                width={167}
                 height={40}
-                className="mr-2"
+                className="scale-[0.9]"
               />
-              <h1 className="text-xl font-bold text-[var(--primary)] cursor-pointer">
-                Synergy
-              </h1>
             </Link>
           </div>
 
-          <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-            {isAuthenticated && (
-              <Link
-                href="/dashboard"
-                className={`${
-                  pathname === "/dashboard"
-                    ? "border-[var(--primary)] text-gray-900"
-                    : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
-                } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
-              >
-                {tDash("title")}
-              </Link>
+          <div className="hidden md:flex md:flex-1 md:justify-center">
+            {!isAuthenticated && (
+              <div className="flex space-x-8">
+                <Link
+                  href="#"
+                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                >
+                  {tNav("toWebsite")}
+                </Link>
+                <Link
+                  href="#"
+                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                >
+                  {tNav("mobileApp")}
+                </Link>
+                <Link
+                  href="#"
+                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                >
+                  {tNav("termsChanges")}
+                </Link>
+                <Link
+                  href="#"
+                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                >
+                  {tNav("help")}
+                </Link>
+              </div>
             )}
           </div>
 
           <div className="flex items-center space-x-4">
+            {isAuthenticated && (
+              <div className="flex items-center space-x-6 mr-4">
+                <Link
+                  href="#"
+                  className="text-gray-500 hover:text-gray-700 text-sm font-medium"
+                >
+                  {tNav("messages")}
+                </Link>
+                <Link
+                  href="#"
+                  className="text-gray-500 hover:text-gray-700 text-sm font-medium"
+                >
+                  {tNav("notifications")}
+                </Link>
+                <Link
+                  href="#"
+                  className="text-gray-500 hover:text-gray-700 text-sm font-medium"
+                >
+                  {tNav("settings")}
+                </Link>
+              </div>
+            )}
+
             <LanguageSwitcher />
 
             {isAuthenticated ? (

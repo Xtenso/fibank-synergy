@@ -120,5 +120,15 @@
     "fees": "Fees and commissions",
     "documents": "Documents",
     "copyright": "© First Investment Bank"
+  },
+
+  "navigation": {
+    "toWebsite": "To website",
+    "mobileApp": "Mobile app",
+    "termsChanges": "Terms & tariff changes",
+    "help": "Help",
+    "messages": "Messages",
+    "notifications": "Notifications",
+    "settings": "Settings"
   }
 }

@@ -120,5 +120,15 @@
     "fees": "Такси и комисионни",
     "documents": "Документи",
     "copyright": "© Първа инвестиционна банка"
+  },
+
+  "navigation": {
+    "toWebsite": "Към сайта",
+    "mobileApp": "Мобилно приложение",
+    "termsChanges": "Промени в ОУ и тарифа",
+    "help": "Помощ",
+    "messages": "Съобщения",
+    "notifications": "Известия",
+    "settings": "Настройки"
   }
 }

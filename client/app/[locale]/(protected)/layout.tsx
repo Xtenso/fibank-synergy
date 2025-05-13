@@ -1,8 +1,10 @@
 "use client";
 
 import { useRequireAuth } from "../lib/auth";
+import { Fragment } from "react";
+import { Spinner } from "@heroui/react";
 
-export default function DashboardLayout({
+export default function ProtectedLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -12,14 +14,16 @@ export default function DashboardLayout({
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
+        <Spinner size="lg" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <main>{children}</main>
-    </div>
+    <Fragment>
+      <div className="min-h-screen bg-gray-100">
+        <main>{children}</main>
+      </div>
+    </Fragment>
   );
 }
