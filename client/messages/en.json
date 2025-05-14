@@ -3,7 +3,7 @@
     "login": "Sign in",
     "register": "Sign up",
     "signOut": "Sign out",
-    "loginTitle": "Sign in to your account",
+    "loginTitle": "Virtual banking branch",
     "noAccount": "Don't have an account? Sign up",
     "alreadyHaveAccount": "Already have an account? Sign in",
     "alreadyLoggedIn": "Already logged in",
@@ -24,6 +24,7 @@
     "emailExists": "A user with this email already exists",
     "usernameExists": "This username is already taken",
     "unexpectedError": "An unexpected error occurred. Please try again later.",
+    "registerReminder": "It is necessary to remember your username and password that you just entered. After confirming your registration at the bank, they will serve as your login credentials for the Virtual Banking Branch (e-fibank).",
     "errors": {
       "usernameRequired": "Username is required",
       "passwordRequired": "Password is required",

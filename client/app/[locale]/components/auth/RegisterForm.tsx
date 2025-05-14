@@ -12,6 +12,7 @@ import {
   Popover,
   PopoverTrigger,
   PopoverContent,
+  Divider,
 } from "@heroui/react";
 import { Link } from "@/i18n/navigation";
 import { calculatePasswordStrength } from "../../utils/passwordStrength";
@@ -192,6 +193,8 @@ export default function RegisterForm() {
         validate={validateField("address")}
       />
 
+      <Divider className="my-4" />
+
       <Input
         label={tUser("username")}
         id="username"
@@ -262,7 +265,20 @@ export default function RegisterForm() {
         validate={validateField("confirmPassword")}
       />
 
-      <div className="flex items-center justify-between">
+      <Divider className="my-4" />
+
+      <div>
+        <p className="text-sm text-gray-600 mb-4">{t("registerReminder")}</p>
+        <Button
+          type="submit"
+          fullWidth
+          isLoading={isSubmitting}
+          color="primary"
+        >
+          {t("register")}
+        </Button>
+      </div>
+      <div className="flex justify-center w-full">
         <div className="text-sm">
           <Link
             href="/auth/login"
@@ -272,10 +288,6 @@ export default function RegisterForm() {
           </Link>
         </div>
       </div>
-
-      <Button type="submit" fullWidth isLoading={isSubmitting} color="primary">
-        {t("register")}
-      </Button>
     </Form>
   );
 }

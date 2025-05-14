@@ -5,7 +5,15 @@ import { usePathname } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
 import Icons from "../../components/icons";
 
-const links = [
+type IconName = keyof typeof Icons;
+
+type NavLink = {
+  key: string;
+  href: string;
+  icon: IconName;
+};
+
+const links: NavLink[] = [
   { key: "home", href: "/dashboard", icon: "Pie" },
   { key: "reports", href: "/dashboard/reports", icon: "Stack" },
   { key: "payments", href: "/dashboard/payments", icon: "Payment" },

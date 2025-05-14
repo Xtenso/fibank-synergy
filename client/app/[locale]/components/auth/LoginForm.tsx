@@ -76,7 +76,11 @@ export default function LoginForm() {
         validate={validateField("password")}
       />
 
-      <div className="flex items-center justify-between">
+      <Button type="submit" fullWidth isLoading={isSubmitting} color="primary">
+        {t("login")}
+      </Button>
+
+      <div className="flex justify-center w-full">
         <div className="text-sm">
           <Link
             href="/auth/register"
@@ -86,10 +90,6 @@ export default function LoginForm() {
           </Link>
         </div>
       </div>
-
-      <Button type="submit" fullWidth isLoading={isSubmitting} color="primary">
-        {t("login")}
-      </Button>
     </Form>
   );
 }

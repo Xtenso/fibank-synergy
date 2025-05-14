@@ -7,18 +7,14 @@ export default function LoginPage() {
   const t = useTranslations("auth");
 
   return (
-    <>
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          {t("loginTitle")}
-        </h2>
-      </div>
+    <div className="sm:mx-auto sm:w-full sm:max-w-md border-1 border-gray-200 rounded-lg p-8">
+      <h2 className="text-2xl font-bold text-gray-900 mb-8">
+        {t("loginTitle")}
+      </h2>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-[var(--secondary-background)] py-8 px-4 sm:rounded-lg sm:px-10">
-          <LoginForm />
-        </div>
+      <div>
+        <LoginForm />
       </div>
-    </>
+    </div>
   );
 }

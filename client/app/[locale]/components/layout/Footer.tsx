@@ -17,7 +17,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-gray-100 mt-auto">
+    <footer className="bg-gray-100 w-full">
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <div className="flex justify-center items-center flex-wrap text-xs text-gray-600">
           {links.map((link, index) => (

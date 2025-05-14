@@ -30,7 +30,7 @@ export default function Navbar() {
                 alt="FiBank Synergy Logo"
                 width={167}
                 height={40}
-                className="scale-[0.9]"
+                className="scale-[0.8]"
                 priority
               />
             </Link>

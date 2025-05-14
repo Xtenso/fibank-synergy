@@ -6,7 +6,7 @@ export default function Home() {
   const t = useTranslations("home");
 
   return (
-    <div className="bg-white min-h-[83vh]">
+    <div className="bg-white">
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="lg:text-center">
           <h2 className="text-base text-[var(--primary)] font-semibold tracking-wide uppercase">

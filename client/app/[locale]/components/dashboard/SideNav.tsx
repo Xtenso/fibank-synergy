@@ -37,8 +37,8 @@ export default function SideNav() {
       <div className="p-4 border-b border-gray-200">
         <Link href="/dashboard" className="block">
           <User
-            name={displayName || t("user")}
-            description={user?.email || t("userAccount")}
+            name={displayName}
+            description={user?.email}
             className="justify-start"
             avatarProps={{
               name: getInitials(displayName),
