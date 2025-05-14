@@ -6,6 +6,7 @@ import { useAuth } from "../../lib/auth";
 import { Form, Button, Input, addToast } from "@heroui/react";
 import { Link } from "@/i18n/navigation";
 import { createValidator } from "../../utils/validation";
+import Icons from "../icons";
 
 export default function LoginForm() {
   const t = useTranslations("auth");
@@ -64,6 +65,7 @@ export default function LoginForm() {
         value={formData.username}
         onValueChange={(value) => handleValueChange("username", value)}
         validate={validateField("username")}
+        startContent={<Icons.User />}
       />
 
       <Input
@@ -74,6 +76,7 @@ export default function LoginForm() {
         value={formData.password}
         onValueChange={(value) => handleValueChange("password", value)}
         validate={validateField("password")}
+        startContent={<Icons.Lock />}
       />
 
       <Button type="submit" fullWidth isLoading={isSubmitting} color="primary">

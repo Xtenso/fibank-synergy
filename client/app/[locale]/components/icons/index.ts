@@ -14,6 +14,8 @@ import StackIcon from "./stack";
 import WithdrawIcon from "./withdraw";
 import TransferIcon from "./transfer";
 import LogoutIcon from "./logout";
+import LockIcon from "./lock";
+import UserIcon from "./user";
 
 export {
   BookIcon,
@@ -32,6 +34,8 @@ export {
   WithdrawIcon,
   TransferIcon,
   LogoutIcon,
+  LockIcon,
+  UserIcon,
 };
 
 const Icons = {
@@ -51,6 +55,8 @@ const Icons = {
   Withdraw: WithdrawIcon,
   Transfer: TransferIcon,
   Logout: LogoutIcon,
+  Lock: LockIcon,
+  User: UserIcon,
 };
 
 export default Icons;

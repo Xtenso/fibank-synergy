@@ -99,7 +99,7 @@ export default function Navbar() {
                   color="primary"
                   name={getInitials(displayName)}
                   size="sm"
-                  className="hidden sm:flex"
+                  className="hidden sm:flex text-[0.7rem]"
                   // src={user?.profilePhotoUrl}
                 />
                 <Button
