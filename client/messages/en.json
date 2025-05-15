@@ -92,7 +92,7 @@
       "emailRequired": "Email is required",
       "emailInvalid": "Email is invalid",
       "phoneRequired": "Phone number is required",
-      "phoneLength": "Phone number must be 10 characters long",
+      "phoneLength": "Phone number must be at least 10 characters long",
       "phoneFormat": "Phone number can only contain numbers, spaces, + and -",
       "addressRequired": "Address is required",
       "addressLength": "Address must be at least 10 characters long"
