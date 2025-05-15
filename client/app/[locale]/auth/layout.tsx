@@ -1,16 +1,27 @@
 "use client";
 
 import { useAuthRedirect } from "../hooks/useAuthRedirect";
+import { useTranslations } from "next-intl";
+import { Spinner } from "@heroui/react";
+import { useAuth } from "../lib/auth";
 
 export default function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { isAuthenticated } = useAuthRedirect();
+  const { isAuthenticated, isLoading } = useAuth();
+  const t = useTranslations("auth");
 
-  if (isAuthenticated) {
-    return null;
+  useAuthRedirect();
+
+  if (isAuthenticated || isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spinner size="lg" />
+        <span className="ml-2">{t("redirectingLoader")}</span>
+      </div>
+    );
   }
 
   return (

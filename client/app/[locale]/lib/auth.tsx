@@ -8,7 +8,6 @@ import { useTranslations } from "next-intl";
 
 const TOKEN_KEY = "fibank_token";
 const USER_KEY = "fibank_user";
-const LOGOUT_FLAG = "just_logged_out";
 
 export interface User {
   id: string;
@@ -35,6 +34,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   justLoggedIn: boolean;
+  justLoggedOut: boolean;
   error: string | null;
   login: (username: string, password: string) => Promise<void>;
   register: (userData: RegisterData) => Promise<void>;
@@ -71,6 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [justLoggedIn, setJustLoggedIn] = useState(false);
+  const [justLoggedOut, setJustLoggedOut] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const t = useTranslations("auth");
@@ -86,6 +87,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return () => clearTimeout(timer);
     }
   }, [justLoggedIn]);
+
+  useEffect(() => {
+    if (justLoggedOut) {
+      const timer = setTimeout(() => {
+        setJustLoggedOut(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [justLoggedOut]);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -209,16 +219,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = (): void => {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
-
-    // Flag to not show warning on log out
-    sessionStorage.setItem(LOGOUT_FLAG, "true");
-    setTimeout(() => {
-      sessionStorage.removeItem(LOGOUT_FLAG);
-    }, 3000);
-
-    setUser(null);
-
     localStorage.removeItem("auth_last_verified");
+
+    setJustLoggedOut(true);
+    setUser(null);
 
     addToast({
       title: t("logoutSuccess"),
@@ -237,6 +241,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isAuthenticated: !!user,
         isLoading,
         justLoggedIn,
+        justLoggedOut,
         error,
         login,
         register,
@@ -257,14 +262,12 @@ export function useAuth() {
 }
 
 export function useRequireAuth() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, justLoggedOut } = useAuth();
   const router = useRouter();
   const t = useTranslations("auth");
   const redirectedRef = useRef(false);
 
   useEffect(() => {
-    const justLoggedOut = sessionStorage.getItem(LOGOUT_FLAG) === "true";
-
     if (
       !isLoading &&
       !isAuthenticated &&
@@ -282,7 +285,7 @@ export function useRequireAuth() {
 
       router.push("/auth/login");
     }
-  }, [isAuthenticated, isLoading, router, t]);
+  }, [isAuthenticated, isLoading, router, t, justLoggedOut]);
 
   return { isLoading };
 }

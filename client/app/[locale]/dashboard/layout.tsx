@@ -1,15 +1,36 @@
 "use client";
 
-import { useRequireAuth } from "../lib/auth";
+import { useAuth, useRequireAuth } from "../lib/auth";
 import { Spinner } from "@heroui/react";
 import SideNav from "../components/dashboard/SideNav";
+import { useTranslations } from "next-intl";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { isLoading } = useRequireAuth();
+  const { isAuthenticated, isLoading } = useAuth();
+  const t = useTranslations("auth");
+
+  useRequireAuth();
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spinner size="lg" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spinner size="lg" />
+        <span className="ml-2">{t("redirectingLoader")}</span>
+      </div>
+    );
+  }
 
   return (
     <div className="flex p-4 bg-gray-100">
@@ -18,13 +39,7 @@ export default function DashboardLayout({
       </div>
 
       <div className="flex-1 overflow-auto">
-        {isLoading ? (
-          <div className="flex justify-center items-center h-full min-h-[400px]">
-            <Spinner size="lg" />
-          </div>
-        ) : (
-          <main>{children}</main>
-        )}
+        <main>{children}</main>
       </div>
     </div>
   );

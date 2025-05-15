@@ -34,6 +34,7 @@
     "demoTitle": "Explore the system",
     "demoDesc": "Explore and experience online banking through our interactive demo version.",
     "demoLink": "DEMO VERSION",
+    "redirectingLoader": "Redirecting...",
     "errors": {
       "usernameRequired": "Username is required",
       "passwordRequired": "Password is required",
