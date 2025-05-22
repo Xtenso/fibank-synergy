@@ -27,7 +27,6 @@ if (isDevelopment) {
       allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
     })
   );
-  console.log("Running in development mode with relaxed CORS");
 } else {
   app.use(
     cors({

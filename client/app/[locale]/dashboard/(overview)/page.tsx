@@ -2,11 +2,14 @@
 
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/app/[locale]/lib/auth";
+import { useRoleName } from "@/app/[locale]/utils/roleUtils";
 
 export default function Dashboard() {
   const { user } = useAuth();
   const t = useTranslations("dashboard");
   const tUser = useTranslations("user");
+
+  const getRoleName = useRoleName();
 
   return (
     <div>
@@ -58,7 +61,7 @@ export default function Dashboard() {
                 {tUser("role")}
               </dt>
               <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                {user?.role}
+                {user?.role ? getRoleName(user.role) : ""}
               </dd>
             </div>
           </dl>

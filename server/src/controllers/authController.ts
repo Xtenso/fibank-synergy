@@ -1,7 +1,12 @@
 import { Request, Response } from "express";
-import User from "../models/User";
+import User, {
+  UserRegistrationData,
+  UserLoginData,
+  UserPopulated,
+} from "../models/User";
+import Role, { RoleCode } from "../models/Role";
 import { generateToken } from "../utils/jwtUtils";
-import { UserRegistrationData, UserLoginData } from "../types/user";
+import { sendSuccess, sendError } from "../utils/responseUtils";
 
 // Register new user -> POST /api/auth/register
 export const register = async (req: Request, res: Response): Promise<void> => {
@@ -18,7 +23,6 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       password,
     }: UserRegistrationData = req.body;
 
-    // Check if email already exists
     const emailExists = await User.findOne({ email });
     if (emailExists) {
       res.status(400).json({
@@ -28,12 +32,20 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Check if username already exists
     const usernameExists = await User.findOne({ username });
     if (usernameExists) {
       res.status(400).json({
         success: false,
         message: "Username already taken",
+      });
+      return;
+    }
+
+    const defaultRole = await Role.findOne({ code: "user" });
+    if (!defaultRole) {
+      res.status(500).json({
+        success: false,
+        message: "Default role not found",
       });
       return;
     }
@@ -48,9 +60,15 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       address,
       username,
       password,
+      role: defaultRole._id,
     });
 
-    const token = generateToken(user._id as string, user.role);
+    const populatedUser = (await User.findById(user._id)
+      .populate("role")
+      .lean()) as UserPopulated | null;
+    const roleCode = populatedUser?.role?.code || "user";
+
+    const token = generateToken(user._id as string, roleCode as RoleCode);
 
     res.status(201).json({
       success: true,
@@ -61,7 +79,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
         nameLatin: user.nameLatin,
         email: user.email,
         username: user.username,
-        role: user.role,
+        role: roleCode,
       },
       token,
     });
@@ -81,46 +99,42 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const { username, password }: UserLoginData = req.body;
 
     const user = await User.findOne({ username }).select("+password");
-
     if (!user) {
-      res.status(401).json({
-        success: false,
-        message: "Invalid credentials",
-      });
+      sendError(res, "Invalid credentials", 401);
       return;
     }
 
     const isPasswordMatch = await user.comparePassword(password);
-
     if (!isPasswordMatch) {
-      res.status(401).json({
-        success: false,
-        message: "Invalid credentials",
-      });
+      sendError(res, "Invalid credentials", 401);
       return;
     }
 
-    const token = generateToken(user._id as string, user.role);
+    const populatedUser = (await User.findById(user._id)
+      .populate("role")
+      .lean()) as UserPopulated | null;
 
-    res.status(200).json({
-      success: true,
-      user: {
-        id: user._id,
-        uin: user.uin,
-        nameCyrillic: user.nameCyrillic,
-        nameLatin: user.nameLatin,
-        email: user.email,
-        username: user.username,
-        role: user.role,
-      },
-      token,
-    });
+    if (!populatedUser || !populatedUser.role) {
+      sendError(res, "User role not found", 500);
+      return;
+    }
+
+    const roleCode = populatedUser.role.code as RoleCode;
+
+    const token = generateToken(user._id as string, roleCode);
+
+    const userData = {
+      id: user._id,
+      uin: user.uin,
+      nameCyrillic: user.nameCyrillic,
+      nameLatin: user.nameLatin,
+      email: user.email,
+      username: user.username,
+      role: roleCode,
+    };
+
+    sendSuccess(res, { user: userData, token }, "Login successful", 200);
   } catch (error) {
-    console.error("Login error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server error during login",
-      error: (error as Error).message,
-    });
+    sendError(res, "Login failed", 500, error);
   }
 };

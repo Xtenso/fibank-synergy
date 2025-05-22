@@ -2,58 +2,44 @@
 
 import { useTranslations } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
-import { Link } from "@/i18n/navigation";
-import Icons from "../../components/icons";
-
-type IconName = keyof typeof Icons;
-
-type NavLink = {
-  key: string;
-  href: string;
-  icon: IconName;
-};
-
-const links: NavLink[] = [
-  { key: "home", href: "/dashboard", icon: "Pie" },
-  { key: "reports", href: "/dashboard/reports", icon: "Stack" },
-  { key: "payments", href: "/dashboard/payments", icon: "Payment" },
-  { key: "statements", href: "/dashboard/statements", icon: "Withdraw" },
-  { key: "accounts", href: "/dashboard/accounts", icon: "List" },
-  { key: "deposits", href: "/dashboard/deposits", icon: "Deposit" },
-  { key: "cards", href: "/dashboard/cards", icon: "Card" },
-  { key: "signTransfers", href: "/dashboard/sign-transfers", icon: "Pen" },
-  { key: "documents", href: "/dashboard/documents", icon: "DocumentsSign" },
-  { key: "services", href: "/dashboard/services", icon: "Letter" },
-  { key: "utilities", href: "/dashboard/utilities", icon: "Book" },
-  { key: "declarations", href: "/dashboard/declarations", icon: "Documents" },
-];
+import { useMenus } from "../../lib/menuService";
+import { Spinner } from "@heroui/react";
+import { useState } from "react";
+import MenuItem from "./MenuItem";
 
 export default function NavLinks() {
   const tNav = useTranslations("navigation");
   const pathname = usePathname();
+  const { menus, loading, error } = useMenus();
+
+  const [activeMenuIds, setActiveMenuIds] = useState<string[]>([]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-4">
+        <Spinner size="sm" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-sm text-red-500 p-2">Failed to load navigation</div>
+    );
+  }
 
   return (
     <div className="space-y-1">
-      {links.map((link) => {
-        const isActive = pathname === link.href;
-        const IconComponent = Icons[link.icon];
-
-        return (
-          <Link
-            key={link.key}
-            href={link.href}
-            className={`flex h-[48px] items-center gap-2 rounded-md p-3 text-sm font-medium 
-              ${
-                isActive
-                  ? "bg-[var(--primary)] text-white"
-                  : "bg-gray-50 text-gray-700 hover:bg-gray-100 hover:text-[var(--primary)]"
-              } transition-colors duration-150`}
-          >
-            <IconComponent className="w-5 h-5" />
-            <span>{tNav(link.key)}</span>
-          </Link>
-        );
-      })}
+      {menus.map((menu) => (
+        <MenuItem
+          key={menu._id}
+          menu={menu}
+          pathname={pathname}
+          tNav={tNav}
+          activeMenuIds={activeMenuIds}
+          setActiveMenuIds={setActiveMenuIds}
+        />
+      ))}
     </div>
   );
 }

@@ -160,6 +160,14 @@
     "news": "Новини",
     "promotions": "Промоции",
     "additional": "Допълнително",
-    "transfer": "Превод"
+    "transfer": "Превод",
+    "domesticPayment": "Вътрешно плащане",
+    "internationalPayment": "Международно плащане"
+  },
+
+  "roles": {
+    "user": "Обикновен Потребител",
+    "admin": "Администратор",
+    "company": "Фирмен Потребител"
   }
 }

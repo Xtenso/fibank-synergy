@@ -16,6 +16,7 @@ import TransferIcon from "./transfer";
 import LogoutIcon from "./logout";
 import LockIcon from "./lock";
 import UserIcon from "./user";
+import ArrowRightIcon from "./arrowRight";
 
 export {
   BookIcon,
@@ -36,6 +37,7 @@ export {
   LogoutIcon,
   LockIcon,
   UserIcon,
+  ArrowRightIcon,
 };
 
 const Icons = {
@@ -57,6 +59,7 @@ const Icons = {
   Logout: LogoutIcon,
   Lock: LockIcon,
   User: UserIcon,
+  ArrowRight: ArrowRightIcon,
 };
 
 export default Icons;

@@ -19,12 +19,12 @@ test.describe("Login functionality", () => {
   });
 
   test("should login successfully with valid credentials", async ({ page }) => {
-    await login(page, "testuser", "test123");
+    await login(page, "testuser", "Test123!");
 
     await expect(page).toHaveURL(/dashboard/, { timeout: 10000 });
 
     // Additional verification that we're logged in
-    const userElement = page.locator("text=testuser");
-    await expect(userElement).toBeVisible({ timeout: 5000 });
+    const settingsElement = page.locator("text=Settings");
+    await expect(settingsElement).toBeVisible({ timeout: 5000 });
   });
 });

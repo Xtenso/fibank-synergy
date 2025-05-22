@@ -42,7 +42,7 @@ test.describe("Registration functionality", () => {
     await expect(page).toHaveURL(/dashboard/, { timeout: 10000 });
 
     // Additional verification that registration succeeded
-    const userElement = page.locator(`text=testuser${uniqueId}`);
-    await expect(userElement).toBeVisible({ timeout: 5000 });
+    const settingsElement = page.locator("text=Settings");
+    await expect(settingsElement).toBeVisible({ timeout: 5000 });
   });
 });

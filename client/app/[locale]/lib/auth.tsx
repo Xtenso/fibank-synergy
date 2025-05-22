@@ -12,11 +12,14 @@ const USER_KEY = "fibank_user";
 export interface User {
   id: string;
   uin: string;
+  uinForeigner?: string;
   nameCyrillic: string;
   nameLatin: string;
   email: string;
+  phoneNumber: string;
+  address: string;
   username: string;
-  role: "user" | "admin";
+  role: string;
 }
 
 // Simplified user type for localStorage
@@ -26,7 +29,7 @@ interface StoredUser {
   nameCyrillic: string;
   nameLatin: string;
   username: string;
-  role: "user" | "admin";
+  role: string;
 }
 
 interface AuthContextType {
@@ -65,6 +68,19 @@ const extractStoredUserData = (userData: any): StoredUser => {
     username: userData.username,
     role: userData.role,
   };
+};
+
+// Helper to extract user data and token from different response formats
+const extractAuthData = (responseData: any) => {
+  const data = responseData.data || responseData;
+  const userData = data.user;
+  const token = data.token;
+
+  if (userData && typeof userData.role === "object" && userData.role._id) {
+    userData.role = userData.role.code;
+  }
+
+  return { userData, token };
 };
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -115,12 +131,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           if (shouldVerify) {
             try {
               const response = await api.get("/users/me");
-              const userData = response.data.user;
+
+              const { userData } = extractAuthData(response.data);
+
+              if (!userData) {
+                throw new Error("Invalid user data");
+              }
+
               const storedUserData = extractStoredUserData(userData);
 
               setUser(userData);
               localStorage.setItem(USER_KEY, JSON.stringify(storedUserData));
-
               localStorage.setItem(
                 "auth_last_verified",
                 currentTime.toString()
@@ -154,17 +175,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setError(null);
 
       const response = await api.post("/auth/login", { username, password });
-      const userData = response.data.user;
+
+      const { userData, token } = extractAuthData(response.data);
+
+      if (!userData || !token) {
+        throw new Error("Invalid response format from server");
+      }
 
       const storedUserData = extractStoredUserData(userData);
 
-      localStorage.setItem(TOKEN_KEY, response.data.token);
+      localStorage.setItem(TOKEN_KEY, token);
       localStorage.setItem(USER_KEY, JSON.stringify(storedUserData));
+      localStorage.setItem("auth_last_verified", Date.now().toString());
 
       setUser(userData);
       setJustLoggedIn(true);
-
-      localStorage.setItem("auth_last_verified", Date.now().toString());
 
       addToast({
         title: t("loginSuccess"),
@@ -188,17 +213,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setError(null);
 
       const response = await api.post("/auth/register", userData);
-      const responseUserData = response.data.user;
+
+      const { userData: responseUserData, token } = extractAuthData(
+        response.data
+      );
+
+      if (!responseUserData || !token) {
+        throw new Error("Invalid response format from server");
+      }
 
       const storedUserData = extractStoredUserData(responseUserData);
 
-      localStorage.setItem(TOKEN_KEY, response.data.token);
+      localStorage.setItem(TOKEN_KEY, token);
       localStorage.setItem(USER_KEY, JSON.stringify(storedUserData));
+      localStorage.setItem("auth_last_verified", Date.now().toString());
 
       setUser(responseUserData);
       setJustLoggedIn(true);
-
-      localStorage.setItem("auth_last_verified", Date.now().toString());
 
       addToast({
         title: t("registerSuccess"),
