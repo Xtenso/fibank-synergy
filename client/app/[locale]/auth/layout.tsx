@@ -15,7 +15,15 @@ export default function AuthLayout({
 
   useAuthRedirect();
 
-  if (isAuthenticated || isLoading) {
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spinner size="lg" />
+      </div>
+    );
+  }
+
+  if (isAuthenticated) {
     return (
       <div className="flex justify-center items-center h-screen">
         <Spinner size="lg" />
