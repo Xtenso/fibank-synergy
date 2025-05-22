@@ -38,4 +38,3 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 ## Issues
 
 - пренасочване text on all pages even if just reloading
-- menu picture and links/href should be optional; for submenus we wont have picture and parents of submenus could be just that and not links

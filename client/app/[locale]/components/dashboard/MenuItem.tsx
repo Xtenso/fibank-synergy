@@ -16,6 +16,7 @@ interface MenuItemProps {
   tNav: (key: string) => string;
   activeMenuIds: string[];
   setActiveMenuIds: (ids: string[]) => void;
+  depth?: number;
 }
 
 export const MenuItem = ({
@@ -24,54 +25,71 @@ export const MenuItem = ({
   tNav,
   activeMenuIds,
   setActiveMenuIds,
+  depth = 0,
 }: MenuItemProps) => {
   const isActive = pathname === menu.href;
   const hasChildren = menu.children && menu.children.length > 0;
   const isOpen = activeMenuIds.includes(menu._id);
   const menuRef = useRef<HTMLDivElement>(null);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const submenuRef = useRef<HTMLDivElement>(null);
 
   const IconComponent =
-    Icons[menu.icon as keyof typeof Icons] || Icons.Documents;
+    menu.icon && Icons[menu.icon as keyof typeof Icons]
+      ? Icons[menu.icon as keyof typeof Icons]
+      : null;
 
-  const handleMouseEnter = (shouldOpen = true) => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
-    }
-
-    if (shouldOpen && hasChildren && !isOpen) {
-      setActiveMenuIds([...activeMenuIds, menu._id]);
-    }
-  };
-
-  const handleMouseLeave = () => {
+  const handleMouseEnter = () => {
     if (hasChildren) {
-      timeoutRef.current = setTimeout(() => {
-        setActiveMenuIds(activeMenuIds.filter((id) => id !== menu._id));
-      }, 300);
+      // For top-level items clear any unrelated active menus
+      if (depth === 0) {
+        const childIds = menu.children?.map((child) => child._id) || [];
+        setActiveMenuIds([
+          menu._id,
+          ...childIds.filter((id) => activeMenuIds.includes(id)),
+        ]);
+      } else {
+        setActiveMenuIds((prev) => [...prev, menu._id]);
+      }
     }
   };
 
+  const handleMouseLeave = (e: React.MouseEvent) => {
+    if (hasChildren) {
+      if (
+        submenuRef.current &&
+        e.relatedTarget &&
+        !submenuRef.current.contains(e.relatedTarget as Node)
+      ) {
+        setActiveMenuIds(activeMenuIds.filter((id) => id !== menu._id));
+      }
+    }
+  };
+
+  // Global click handler to close menus when clicking elsewhere
   useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
+    const handleGlobalClick = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setActiveMenuIds((ids) => ids.filter((id) => id !== menu._id));
       }
     };
-  }, []);
+
+    document.addEventListener("click", handleGlobalClick);
+    return () => {
+      document.removeEventListener("click", handleGlobalClick);
+    };
+  }, [menu._id, setActiveMenuIds]);
 
   return (
     <div
       ref={menuRef}
       className="relative"
-      onMouseEnter={() => handleMouseEnter()}
+      onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       <Link
         href={menu.href}
         className={`flex h-[48px] items-center gap-2 rounded-md p-3 text-sm font-medium 
-          justify-between
+          justify-between whitespace-nowrap
           ${
             isActive
               ? "bg-[var(--primary)] text-white"
@@ -79,7 +97,7 @@ export const MenuItem = ({
           } transition-colors duration-150`}
       >
         <div className="flex items-center gap-2">
-          <IconComponent className="w-5 h-5" />
+          {IconComponent && <IconComponent className="w-5 h-5" />}
           <span>{tNav(menu.key)}</span>
         </div>
 
@@ -94,16 +112,16 @@ export const MenuItem = ({
 
       {hasChildren && (
         <div
+          ref={submenuRef}
           className={`
-            absolute top-0 left-[98%] pb-2 pl-3 pr-2 min-w-[200px] 
-            z-[20] transition-all duration-200
+            absolute top-0 left-[98%] pb-2 pl-3 pr-4 min-w-[220px] w-max z-[20] 
+            transition-all duration-300 transform origin-top-left
             ${
               isOpen
-                ? "opacity-100 visible"
-                : "opacity-0 invisible pointer-events-none"
+                ? "opacity-100 scale-100 pointer-events-auto"
+                : "opacity-0 scale-95 pointer-events-none"
             }
           `}
-          onMouseEnter={() => handleMouseEnter(false)}
         >
           <div className="bg-white rounded-md shadow-md">
             {menu.children?.map((child: any) => (
@@ -114,6 +132,7 @@ export const MenuItem = ({
                 tNav={tNav}
                 activeMenuIds={activeMenuIds}
                 setActiveMenuIds={setActiveMenuIds}
+                depth={depth + 1}
               />
             ))}
           </div>

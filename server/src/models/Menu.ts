@@ -3,7 +3,7 @@ import mongoose, { Document, Schema } from "mongoose";
 export interface Menu {
   key: string;
   href: string;
-  icon: string;
+  icon?: string;
   parentId: mongoose.Types.ObjectId | null;
   order: number;
   isActive: boolean;
@@ -18,7 +18,7 @@ const MenuSchema: Schema = new Schema(
   {
     key: { type: String, required: true, unique: true },
     href: { type: String, required: true },
-    icon: { type: String, required: true },
+    icon: { type: String, required: false },
     parentId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Menu",
